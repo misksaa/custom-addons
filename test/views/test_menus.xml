@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+    
         <!-- Action for the menu -->
         <record id="action_test_menu" model="ir.actions.act_window">
             <field name="name">Test Action</field>
