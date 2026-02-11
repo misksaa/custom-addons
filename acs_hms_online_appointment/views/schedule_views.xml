@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="acs_schedule_form" model="ir.ui.view">
+        <field name="name">acs.schedule.form.inherit</field>
+        <field name="model">acs.schedule</field>
+        <field name="inherit_id" ref="acs_website_booking.acs_schedule_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="department_id" groups="acs_hms.group_allow_multi_department" invisible="acs_own_schedule"/>
+                <field name="physician_ids" widget="many2many_tags" invisible="acs_own_schedule"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_acs_schedule_tree" model="ir.ui.view">
+        <field name="name">acs.schedule.tree.inherit</field>
+        <field name="model">acs.schedule</field>
+        <field name="inherit_id" ref="acs_website_booking.view_acs_schedule_tree"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="before">
+                <field name="department_id" groups="acs_hms.group_allow_multi_department"/>
+                <field name="physician_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="acs_schedule_slot_search" model="ir.ui.view">
+        <field name="name">acs.schedule.search.inherit</field>
+        <field name="model">acs.schedule</field>
+        <field name="inherit_id" ref="acs_website_booking.acs_schedule_slot_search"/>
+        <field name="arch" type="xml">
+            <filter name="my_schedule" position="before">
+                <field name="physician_ids"/>
+                <field name="department_id"/>
+            </filter>
+        </field>
+    </record>
+
+    <!-- Appointment schedule Slot -->
+    <record id="view_acs_schedule_slot_form" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.form.inherit</field>
+        <field name="model">acs.schedule.slot</field>
+        <field name="inherit_id" ref="acs_website_booking.view_acs_schedule_slot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='slot_ids']//list/field[@name='rem_limit']" position="after">
+                <field name="physician_id"/>
+                <field name="department_id" groups="acs_hms.group_allow_multi_department"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Appointment schedule Slot Lines Form -->
+    <record id="view_acs_schedule_slot_lines_form" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.lines.form.inherit</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="inherit_id" ref="acs_website_booking.view_acs_schedule_slot_lines_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button name="acs_book_appointment" string="Book Appointment" type="object" class="oe_highlight" invisible="rem_limit==0"/>
+            </header>
+            <field name="rem_limit" position="after">
+                <field name="physician_id" readonly="1"/>
+                <field name="department_id" groups="acs_hms.group_allow_multi_department" readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_acs_schedule_slot_lines_tree" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.lines.tree.inherit</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="inherit_id" ref="acs_website_booking.view_acs_schedule_slot_lines_tree"/>
+        <field name="arch" type="xml">
+            <field name="limit" position="after">
+                <field name="physician_id"/>
+                <field name="department_id" groups="acs_hms.group_allow_multi_department"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="acs_my_schedule_slot_lines_search" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.lines.search.inherit</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="inherit_id" ref="acs_website_booking.acs_my_schedule_slot_lines_search"/>
+        <field name="arch" type="xml">
+            <filter name="my_slots" position="before">
+                <field name="physician_id"/>
+                <field name="department_id" groups="acs_hms.group_allow_multi_department"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="acs_schedule_slot_lines_calendar" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.lines.tree.inherit</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="inherit_id" ref="acs_website_booking.acs_schedule_slot_lines_calendar"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="replace">
+                <field name="physician_id" avatar_field="avatar_128" widget="many2one_avatar_resource"/>
+                <field name="department_id" filters="1" color="color" groups="acs_hms.group_allow_multi_department"/>
+            </field>
+            <field name="rem_limit" position="replace">
+                <field name="appointment_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_appointment_schedule_slot_lines" model="ir.actions.act_window">
+        <field name="name">Appointment Slots</field>
+        <field name="res_model">acs.schedule.slot.lines</field>
+        <field name="view_mode">calendar,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Records Found.
+            </p>
+        </field>
+    </record>
+
+</odoo>

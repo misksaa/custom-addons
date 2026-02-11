@@ -1,0 +1,1334 @@
+/** @odoo-module **/
+
+// ========== GLOBAL CALENDAR STYLES ==========
+.o_calendar_horizontal_scroll {
+    overflow-x: auto;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+// ========== MULTIPLE SELECTION WITH SEARCH ==========
+
+.btn-group .dropdown-menu {
+    z-index: 1101;
+
+    .dropdown-item {
+        padding: 8px 16px;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: #e3f2fd;
+            color: #007bff;
+        }
+
+        i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+        }
+    }
+}
+
+.btn-sm.dropdown-toggle {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+
+    i {
+        margin-right: 6px;
+    }
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-color: #28a745;
+
+    &:hover {
+        background: linear-gradient(135deg, #218838 0%, #1e9e8a 100%);
+        border-color: #1e7e34;
+    }
+}
+
+// ========== ENHANCED DROPDOWN STYLES ==========
+.btn-group .dropdown-menu {
+    z-index: 11000 !important;
+
+    .dropdown-item {
+        padding: 8px 16px;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: #e3f2fd;
+            color: #007bff;
+        }
+
+        i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+        }
+    }
+}
+
+// ========== CALENDAR CONTAINER Z-INDEX HIERARCHY ==========
+.o_day_calendar_container,
+.o_week_calendar_container,
+.o_month_calendar_container,
+.o_cabin_day_calendar_container,
+.o_cabin_week_calendar_container,
+.o_cabin_month_calendar_container {
+    position: relative;
+    z-index: 1;
+}
+
+.o_calendar_header {
+    z-index: 10000;
+}
+
+.multiple-select-container {
+    z-index: 11000;
+}
+
+.suggestions-dropdown {
+    z-index: 11001 !important;
+}
+
+.o_calendar_event_popup {
+    z-index: 11002 !important;
+}
+// ========== HEADER COLORS - CONSISTENT ACROSS ALL VIEWS ==========
+$header-bg-color: #6c757d;
+$header-text-color: white;
+
+// ========== WEEK CALENDAR STYLES ==========
+.o_week_calendar_table {
+    width: auto;
+    min-width: 100%;
+    table-layout: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    .time-header {
+        width: 80px;
+        min-width: 80px;
+        position: sticky;
+        left: 0;
+        top: 0;
+        z-index: 30;
+        border-right: 2px solid #dee2e6;
+        background: white;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    }
+
+    .doctor-main-header {
+        font-weight: 600;
+        color: $header-text-color;
+        border-left: 2px solid white;
+        min-width: 200px;
+        background: $header-bg-color;
+        position: relative;
+
+        &:first-child {
+            border-left: none;
+        }
+    }
+
+    .day-header {
+        font-weight: 500;
+        color: $header-text-color;
+        border-left: 1px solid rgba(255,255,255,0.3);
+        min-width: 120px;
+        transition: all 0.3s ease;
+        &:first-child {
+            border-left: none;
+        }
+    }
+
+    .time-slot-cell {
+        width: 80px;
+        min-width: 80px;
+        position: sticky;
+        left: 0;
+        background: white !important;
+        border-right: 2px solid #dee2e6;
+        z-index: 20;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .event-slot-cell {
+        min-height: 50px;
+        min-width: 120px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-right: 1px solid #e9ecef;
+        border-bottom: 1px solid #e9ecef;
+        position: relative;
+        background: #f8f9fa;
+
+        &.drag-over {
+            background: #e3f2fd !important;
+            border: 2px dashed #2196F3 !important;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        &:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        &:nth-child(odd) {
+            background-color: #ffffff;
+        }
+    }
+
+    .time-slot-row {
+        &:nth-child(even) .event-slot-cell {
+            background-color: #f8f9fa;
+        }
+
+        &:nth-child(odd) .event-slot-cell {
+            background-color: #ffffff;
+        }
+    }
+}
+
+.o_week_calendar_container .o_calendar_event {
+    font-size: 0.90em;
+    padding: 6px 8px;
+    margin: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    position: relative;
+    transition: all 0.2s ease;
+    border-left: 4px solid rgba(255,255,255,0.5);
+
+    .event-content {
+        width: 100%;
+        overflow: hidden;
+
+        .event-title {
+            font-size: 0.8em;
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .event-time {
+            font-size: 0.7em;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+    }
+
+    &[draggable="true"] {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+    }
+}
+
+// ========== DAY CALENDAR STYLES (PHYSICIAN) - UNCHANGED ==========
+.o_day_calendar_table {
+    width: auto;
+    min-width: 100%;
+    table-layout: fixed !important;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    .doctor-column {
+        background: #f8f9fa;
+        width: 35vw !important;
+        min-width: 35vw !important;
+        max-width: 35vw !important;
+        position: sticky;
+        left: 0;
+        z-index: 25;
+        border-right: 2px solid #dee2e6;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+        padding: 8px 12px !important;
+
+        .doctor-color-indicator {
+            width: 16px;
+            height: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    }
+
+    .time-slot-cell {
+        background: white;
+        color: #495057;
+        width: 80px;
+        min-width: 80px;
+        border-right: 2px solid #dee2e6;
+        position: sticky;
+        left: 0;
+        z-index: 20;
+        font-weight: 600;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    }
+
+    .event-slot-cell {
+        min-height: 85px;
+        width: 25vw !important;
+        min-width: 25vw !important;
+        max-width: 25vw !important;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        background: #ffffff;
+        border-bottom: 1px solid #e9ecef;
+
+        &.drag-over {
+            background: #e3f2fd !important;
+            border: 2px dashed #2196F3 !important;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        &:nth-child(odd) {
+            background-color: #f8f9fa;
+        }
+    }
+}
+
+.o_day_calendar_container .o_calendar_event {
+    font-size: 0.95em;
+    padding: 8px 10px;
+    margin: 3px;
+    border-radius: 6px;
+    cursor: move;
+    position: relative;
+    transition: all 0.2s ease;
+    border-left: 4px solid rgba(255,255,255,0.5);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+    .event-title {
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .event-phone {
+        font-size: 10px !important;
+        color: rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .event-time {
+        font-size: 0.95em;
+        opacity: 0.95;
+        font-weight: 600;
+    }
+
+    &[draggable="true"] {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+    }
+}
+
+// ========== MONTH CALENDAR STYLES - UPDATED ==========
+.o_month_calendar_table {
+    width: auto;
+    min-width: 100%;
+    table-layout: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    .time-header {
+        width: 70px;
+        min-width: 70px;
+        position: sticky;
+        left: 0;
+        top: 0;
+        z-index: 30;
+        border-right: 2px solid #dee2e6;
+        background: white;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    }
+
+    .physician-month-header {
+        font-weight: 700;
+        color: $header-text-color;
+        border-left: 2px solid white;
+        min-width: 180px;
+        background: $header-bg-color;
+        position: relative;
+
+        &:first-child {
+            border-left: none;
+        }
+    }
+
+    .time-slot-cell {
+        width: 70px;
+        min-width: 70px;
+        position: sticky;
+        left: 0;
+        background: white !important;
+        border-right: 2px solid #dee2e6;
+        z-index: 20;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .day-header-cell {
+        min-height: 60px;
+        min-width: 50px;
+        max-width: 50px;
+        width: 50px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #e9ecef;
+        border-right: 1px solid #e9ecef;
+        position: relative;
+        background: white;
+        font-size: 0.8em;
+        padding: 4px !important;
+
+        .fw-bold {
+            font-size: 0.8em;
+            margin-bottom: 2px;
+        }
+
+        .text-muted {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #495057 !important;
+        }
+    }
+
+    .event-day-cell {
+        min-height: 45px;
+        min-width: 50px;
+        max-width: 50px;
+        width: 50px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        border-bottom: 1px solid #e9ecef;
+        border-right: 1px solid #e9ecef;
+        background: white;
+        vertical-align: top;
+        padding: 2px !important;
+        overflow: hidden;
+
+        &.drag-over {
+            background: #e3f2fd !important;
+            border: 2px dashed #2196F3 !important;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        &.bg-light {
+            opacity: 0.6;
+            background: #f8f9fa !important;
+        }
+    }
+}
+
+.o_month_calendar_container .month-event {
+    font-size: 0.65em;
+    padding: 2px 3px;
+    margin: 1px 0;
+    border-radius: 3px;
+    cursor: move;
+    position: relative;
+    transition: all 0.2s ease;
+    border-left: 2px solid rgba(255,255,255,0.5);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    max-width: 46px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .event-content {
+        width: 100%;
+        overflow: hidden;
+
+        .event-title {
+            font-size: 0.75em;
+            margin-bottom: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .event-time {
+            font-size: 0.65em;
+            opacity: 0.9;
+            font-weight: 500;
+            line-height: 1.1;
+            display: none;
+        }
+    }
+
+    &[draggable="true"] {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+    }
+}
+
+// ========== CABIN CALENDAR STYLES - FIXED AND IMPROVED ==========
+.o_cabin_day_calendar_table {
+    width: auto;
+    min-width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    .cabin-column {
+        background: #f8f9fa;
+        width: 30vw !important; /* Reduced from 35vw to 30vw - about 25% reduction */
+        min-width: 30vw !important;
+        max-width: 30vw !important;
+        position: sticky;
+        left: 0;
+        z-index: 25;
+        border-right: 2px solid #dee2e6;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+        padding: 4px 8px !important; /* Reduced padding */
+
+        .cabin-color-indicator {
+            width: 14px;
+            height: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            margin-right: 6px;
+        }
+
+        .d-flex {
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        strong {
+            font-size: 0.9rem !important; /* Smaller font size */
+            line-height: 1.2;
+        }
+    }
+
+    .time-slot-cell {
+        background: white;
+        color: #495057;
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+        border-right: 2px solid #dee2e6;
+        position: sticky;
+        left: 0;
+        z-index: 20;
+        font-weight: 600;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    }
+
+    .event-slot-cell {
+        min-height: 50px;
+        height: 50px;
+        width: 30vw !important; /* Matches cabin column width */
+        min-width: 30vw !important;
+        max-width: 30vw !important;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        background: #ffffff;
+        border-bottom: 1px solid #e9ecef;
+        overflow: visible !important; /* Changed from hidden to visible */
+        padding: 0 !important;
+
+        &.drag-over {
+            background: #e3f2fd !important;
+            border: 2px dashed #2196F3 !important;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        &:nth-child(odd) {
+            background-color: #f8f9fa;
+        }
+    }
+}
+
+// ========== CABIN DAY VIEW EVENT STYLES - FIXED TO SHOW FULL DURATION ==========
+// ========== CABIN DAY VIEW EVENT STYLES - FIXED FOR BETTER LAYOUT ==========
+// ========== CABIN DAY VIEW EVENT STYLES - FIXED FOR BETTER LAYOUT ==========
+
+
+// ========== CABIN DAY VIEW EVENT STYLES - FIXED LAYOUT ==========
+.o_cabin_day_calendar_container .o_calendar_event {
+    font-size: 0.8em !important;
+    padding: 6px 8px !important;
+    margin: 0 !important;
+    border-radius: 4px;
+    cursor: move;
+    position: absolute !important;
+    transition: all 0.2s ease;
+    border-left: 4px solid rgba(255,255,255,0.5);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    overflow: hidden;
+    z-index: 10;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    top: 0;
+    bottom: auto;
+
+    .event-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        justify-content: space-between;
+    }
+
+    .event-row-1 {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 2px;
+        min-height: 16px;
+    }
+
+    .event-row-2 {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        min-height: 16px;
+    }
+
+    .event-left {
+        flex: 1;
+        text-align: left;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding-right: 5px;
+    }
+
+    .event-right {
+        flex: 1;
+        text-align: right;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding-left: 5px;
+    }
+
+    .event-patient-name {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: white;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+
+    .event-patient-code {
+        font-size: 10px !important;
+        color: rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .event-doctor-name {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: white;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+
+    .event-phone {
+        font-size: 10px !important;
+        color: rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    &[draggable="true"] {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+    }
+}
+
+// Ensure events can span multiple cells properly
+.o_cabin_day_calendar_table .event-slot-cell {
+    .o_calendar_event {
+        // Allow events to overflow beyond cell boundaries
+        overflow: visible !important;
+
+        // When event spans multiple rows, ensure it's visible
+        &[t-att-style*="height"] {
+            position: absolute !important;
+            z-index: 10 !important;
+            overflow: hidden !important;
+        }
+    }
+}
+
+// Container for events to ensure they can span multiple cells
+.events-container {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+}
+
+// Fix for cell overflow
+.o_cabin_day_calendar_table .event-slot-cell {
+    overflow: visible !important;
+    position: relative;
+}
+
+// ========== SHARED CALENDAR ELEMENTS ==========
+.doctor-color-indicator,
+.physician-color-indicator,
+.cabin-color-indicator {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+
+// ========== EVENT POPUP STYLES ==========
+.o_calendar_event_popup {
+    position: fixed;
+    background: white;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    min-width: 350px;
+    max-width: 450px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    pointer-events: auto;
+
+    .popup-header {
+        background: $header-bg-color;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        border-radius: 12px 12px 0 0;
+        text-align: center;
+        position: relative;
+
+        h6 {
+            color: white;
+            font-size: 14px;
+            width: 100%;
+            margin: 0;
+            padding: 12px 0;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+    }
+
+    .popup-content {
+        padding: 20px;
+        max-height: 350px;
+        overflow-y: auto;
+        background: #f8f9fa;
+    }
+
+    .event-fields-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .event-field-row {
+        display: flex;
+        gap: 20px;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        @media (max-width: 480px) {
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+
+    .event-field {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+
+        strong {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        span {
+            font-size: 13px;
+            color: #495057;
+            word-break: break-word;
+            font-weight: 500;
+        }
+    }
+}
+
+// ========== INTERACTIVE ELEMENTS ==========
+.clickable-day-header {
+    cursor: pointer !important;
+    transition: all 0.3s ease;
+
+    .py-1 {
+        transition: all 0.3s ease;
+    }
+}
+
+// ========== ANIMATIONS ==========
+@keyframes pulse-border {
+    0% {
+        border-color: #2196F3;
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4);
+    }
+    50% {
+        border-color: #2196F3;
+        box-shadow: 0 0 0 4px rgba(33, 150, 243, 0);
+    }
+    100% {
+        border-color: #2196F3;
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+    }
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ========== RESPONSIVE DESIGN ==========
+@media (max-width: 768px) {
+    .o_day_calendar_table,
+    .o_week_calendar_table {
+        .time-slot-cell {
+            width: 60px;
+            min-width: 60px;
+            font-size: 10px;
+        }
+
+        .event-slot-cell {
+            min-height: 60px;
+            min-width: 150px;
+        }
+    }
+
+    .o_calendar_event {
+        font-size: 0.65em !important;
+        padding: 4px 6px !important;
+    }
+
+    .doctor-column,
+    .doctor-main-header {
+        min-width: 150px !important;
+    }
+
+    .day-header {
+        min-width: 100px !important;
+    }
+
+    .o_calendar_event_popup {
+        min-width: 280px !important;
+        max-width: 320px !important;
+    }
+
+    // Month calendar responsive
+    .o_month_calendar_table {
+        .time-header {
+            width: 60px;
+            min-width: 60px;
+        }
+
+        .physician-month-header {
+            min-width: 150px !important;
+        }
+
+        .time-slot-cell {
+            width: 60px;
+            min-width: 60px;
+        }
+
+        .day-header-cell,
+        .event-day-cell {
+            min-width: 45px;
+            max-width: 45px;
+            width: 45px;
+            min-height: 50px;
+        }
+    }
+
+    .o_month_calendar_container .month-event {
+        font-size: 0.6em !important;
+        max-width: 41px;
+    }
+
+    // Cabin responsive
+    .o_cabin_day_calendar_table {
+        .cabin-column {
+            width: 40vw !important; /* Adjusted for mobile */
+            min-width: 40vw !important;
+            max-width: 40vw !important;
+            padding: 3px 6px !important;
+        }
+
+        .event-slot-cell {
+            width: 40vw !important;
+            min-width: 40vw !important;
+            max-width: 40vw !important;
+        }
+
+        .o_calendar_event {
+            font-size: 0.7em !important;
+            padding: 3px 4px !important;
+            
+            .event-doctor,
+            .event-time {
+                font-size: 8px !important;
+            }
+            
+            .event-patient,
+            .event-phone {
+                font-size: 7px !important;
+            }
+            
+            .event-name {
+                font-size: 9px !important;
+            }
+        }
+    }
+}
+
+// ========== STATUS BADGES ==========
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: white !important;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+// ========== COMBINED SEARCH INPUT STYLES ==========
+.selected-items-container {
+    transition: all 0.3s ease;
+    border: 2px solid #e9ecef;
+
+    &:focus-within {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        transform: translateY(-1px);
+    }
+
+    input.border-0 {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+
+        &:focus {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+    }
+}
+
+.outline-none {
+    outline: none !important;
+}
+
+// ========== MULTIPLE SELECTION WITH SEARCH ==========
+.multiple-select-container {
+    position: relative;
+    min-width: 200px;
+
+    .selected-items-container {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        background: white;
+        min-height: 44px;
+
+        &:hover {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .selected-item {
+            font-size: 0.75em;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 4px 8px;
+            margin: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+            .btn-close {
+                font-size: 0.6em;
+                padding: 0.25rem;
+                margin-left: 0.25rem;
+                filter: brightness(0) invert(1);
+                opacity: 0.8;
+
+                &:hover {
+                    opacity: 1;
+                    transform: scale(1.2);
+                }
+            }
+        }
+
+        .btn-close-sm {
+            font-size: 0.7em;
+            padding: 0.3rem;
+            transition: all 0.3s ease;
+        }
+    }
+
+    .form-control-sm {
+        font-size: 0.875rem;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+
+        &:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            transform: translateY(-1px);
+        }
+    }
+
+    .suggestions-dropdown {
+        z-index: 1050;
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        animation: slide-in 0.3s ease;
+
+        .suggestion-item {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f8f9fa;
+            padding: 12px 16px;
+
+            &:hover {
+                background: #e3f2fd;
+                transform: translateX(5px);
+                border-radius: 6px;
+            }
+        }
+    }
+}
+
+// ========== MODERN SCROLLBAR ==========
+.o_calendar_horizontal_scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.o_calendar_horizontal_scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.o_calendar_horizontal_scroll::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.o_calendar_horizontal_scroll::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+// ========== SMOOTH TRANSITIONS ==========
+* {
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+// ========== ACCESSIBILITY ==========
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+.search-field-selector {
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    background: white;
+
+    &:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        outline: none;
+    }
+}
+
+// Remove the opacity transitions from events
+.o_calendar_event {
+    // Remove opacity transitions that cause darkening
+    opacity: 1 !important;
+}
+
+// Remove additional hover effects that cause multiple visual changes
+.event-slot-cell:hover .o_calendar_event {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+// ========== HORIZONTAL EVENT LAYOUT STYLES FOR CABIN VIEW ONLY ==========
+.events-horizontal-container {
+    display: flex;
+    width: 100%;
+    height: 100%; /* Fill the entire cell */
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px; /* Small gap between events */
+    overflow: visible !important; /* No scrollbar inside */
+    flex-wrap: nowrap; /* Force all events on one line */
+}
+
+// CABIN VIEW EVENT STYLES - SIMPLIFIED
+.o_cabin_day_calendar_table .o_calendar_event {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 1 1 auto; /* Flexible width */
+    height: 75px; /* Fixed height */
+    margin: 0;
+    padding: 4px 6px !important; /* Reduced padding */
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    min-width: 0; /* Allow shrinking */
+
+    .event-simple-content {
+        width: 100%;
+        text-align: center;
+
+        .event-name {
+            font-size: 11px !important;
+            font-weight: 700;
+            color: white;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+
+        .event-time {
+            font-size: 9px !important;
+            color: rgba(255, 255, 255, 0.9);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    &[draggable="true"] {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+            opacity: 0.8 !important;
+            transform: scale(0.98);
+        }
+    }
+}
+
+// Dynamic flex basis for events based on count
+.event-flex-1 {
+    flex: 1 1 100% !important; /* Single event takes full width */
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+.event-flex-2 {
+    flex: 1 1 calc(50% - 1px) !important; /* 2 events: 50% each */
+    min-width: calc(50% - 1px) !important;
+    max-width: calc(50% - 1px) !important;
+}
+
+.event-flex-3 {
+    flex: 1 1 calc(33.333% - 1px) !important; /* 3 events: 33.33% each */
+    min-width: calc(33.333% - 1px) !important;
+    max-width: calc(33.333% - 1px) !important;
+}
+
+.event-flex-4 {
+    flex: 1 1 calc(25% - 1px) !important; /* 4 events: 25% each */
+    min-width: calc(25% - 1px) !important;
+    max-width: calc(25% - 1px) !important;
+}
+
+// For more than 4 events, they will shrink to fit
+.event-flex-5,
+.event-flex-6,
+.event-flex-7,
+.event-flex-8 {
+    flex: 1 1 calc(20% - 1px) !important; /* 5+ events: 20% each minimum */
+    min-width: calc(20% - 1px) !important;
+    max-width: none !important; /* Allow expanding beyond */
+}
+
+// Fix for events during drag in cabin view
+.o_cabin_day_calendar_table .o_calendar_event.ui-draggable-dragging {
+    position: absolute !important;
+    z-index: 10000 !important;
+    opacity: 0.8 !important;
+    transform: rotate(2deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3) !important;
+    width: 150px !important; /* Fixed width during drag */
+    height: 60px !important;
+}
+
+// PHYSICIAN DAY VIEW STYLES - UNCHANGED
+.o_day_calendar_container .o_calendar_event {
+    font-size: 0.95em;
+    padding: 8px 10px;
+    margin: 3px;
+    border-radius: 6px;
+    cursor: move;
+    position: relative;
+    transition: all 0.2s ease;
+    border-left: 4px solid rgba(255,255,255,0.5);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+    .event-title {
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .event-time {
+        font-size: 0.95em;
+        opacity: 0.95;
+        font-weight: 600;
+    }
+
+    &[draggable="true"] {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+    }
+}
+
+// Responsive adjustments for cabin view
+@media (max-width: 768px) {
+    .o_cabin_day_calendar_table .o_calendar_event {
+        height: 60px;
+        padding: 3px 4px !important;
+
+        .event-simple-content {
+            .event-name {
+                font-size: 9px !important;
+            }
+
+            .event-time {
+                font-size: 8px !important;
+            }
+        }
+    }
+
+    .event-slot-cell {
+        min-height: 70px !important;
+        height: 70px !important;
+    }
+}
+
+// ========== SPECIFIC FIX FOR CABIN DAY VIEW EVENT OVERFLOW ==========
+.o_cabin_day_calendar_table .event-slot-cell {
+    .o_calendar_event {
+        position: absolute !important;
+        z-index: 10 !important;
+        /* Allow events to overflow beyond cell boundaries */
+        overflow: visible !important;
+    }
+}
+
+// Container for events to ensure they can span multiple cells
+.events-container {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+}
+
+
+

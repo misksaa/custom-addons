@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_details" inherit_id="portal.portal_my_details">
+        <xpath expr="//div[hasclass('col-lg-8')]" position="after">
+            <div class="col-lg-4">
+                <img t-attf-src="/web/image/res.partner/{{partner.id}}/image_1920/400x400" t-att-alt="partner.name" class="img img-fluid mx-auto mt64"/>
+            </div>
+        </xpath>
+
+        <xpath expr="//form" position="attributes">
+            <attribute name="enctype">multipart/form-data</attribute>
+        </xpath>
+    </template>
+
+    <template id="portal_my_details_fields" inherit_id="portal.portal_my_details_fields">
+        <xpath expr="//select[@name='state_id']/parent::div" position="after">
+            <div name="file_container" t-attf-class="form-group #{error and 'image_1920' in error and 'has-error' or ''}">
+                <label class="col-md-3 col-sm-4 control-label" for="image_1920">Image</label>
+                <div class="col-md-7 col-sm-8">
+                    <div class="btn btn-default btn-file col-md-12">
+                        <input name="image_1920" id="image_1920" type="file"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

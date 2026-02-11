@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_treatment_schedule" model="ir.actions.report">
+        <field name="name">Treatment Schedule</field>
+        <field name="model">hms.treatment.schedule</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hms_treatment_schedule.report_treatment_schedule</field>
+        <field name="report_file">hms_treatment_schedule.report_treatment_schedule</field>
+        <field name="paperformat_id" ref="hms_treatment_schedule.paperformat_treatment_schedule"/>
+        <field name="print_report_name">'Treatment Schedule - %s' % (object.patient_id.name or '')</field>
+        <field name="binding_model_id" ref="model_hms_treatment_schedule"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

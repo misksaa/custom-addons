@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="acs_hms_pharmacy_pos.PrescriptionOrderRow">
+        <div class="order-row"
+        t-att-class="{ highlight: highlighted }"
+        t-on-click="() => this.props.onClickPrescriptionOrder(props.order)">
+            <div class="col name p-2">
+                <div t-if="ui.isSmall">Order</div>
+                <div><t t-esc="name"/></div>
+            </div>
+            <div class="col date p-2">
+                <div t-if="ui.isSmall">Date</div>
+                <div><t t-esc="date"/></div>
+            </div>
+            <div class="col partner p-2">
+                <div t-if="ui.isSmall">Patient</div>
+                <div><t t-esc="partner"/></div>
+            </div>
+            <div class="col prescriptionsman p-2">
+                <div t-if="ui.isSmall">Prescribing Doctor</div>
+                <div><t t-esc="prescriptionsman"/></div>
+            </div>
+            <div class="col total p-2">
+                <div t-if="ui.isSmall">Total</div>
+                <div><t t-esc="total"/></div>
+            </div>
+            <div class="col state p-2">
+                <div t-if="ui.isSmall">State</div>
+                <div><t t-esc="state"/></div>
+            </div>
+            <div class="col posordercount p-2">
+                <div t-if="ui.isSmall">POS Orders</div>
+                <div><t t-esc="pos_order_count"/></div>
+            </div>
+        </div>
+    </t>
+
+</templates>

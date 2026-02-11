@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Patient Form View Inherit - Add Treatment Schedule Button -->
+    <record id="view_hms_patient_form_inherit_treatment_schedule" model="ir.ui.view">
+        <field name="name">hms.patient.form.inherit.treatment.schedule</field>
+        <field name="model">hms.patient</field>
+        <field name="inherit_id" ref="acs_hms.view_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_treatment_schedule" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
+                    <field name="treatment_schedule_count" widget="statinfo" string="Treatment Schedules"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,51 @@
+{
+    'name': 'Appointment Calendar',
+    'version': '18.0.1.0.0',
+    'category': 'Healthcare',
+    'summary': 'Appointment calendar view organized by physician and cabin with day and week views',
+    'description': """
+            Professional appointment calendar module with day and week views organized by physicians and consultation rooms.
+            Includes Treatment Schedule integration and Bulk Appointments Creator.
+        """,
+    'author': '',
+    'website': 'https://www.website.com',
+    'depends': ['acs_hms', 'web', 'hms_treatment_schedule'],  # Added hms_treatment_schedule dependency
+    'data': [
+        'security/ir.model.access.csv',
+        'views/calendar_views.xml',
+        'views/calendar_time_config_views.xml',
+        'views/calendar_templates.xml',
+        'views/appointment_cabin_working_hours.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'calendar_by_assignee/static/src/js/search_mixin.js',
+            'calendar_by_assignee/static/src/js/calendar_controller.js',
+            'calendar_by_assignee/static/src/js/calendar_constraints.js',
+            'calendar_by_assignee/static/src/js/appointment_form_validation.js',
+            'calendar_by_assignee/static/src/js/appointment_form_popup.js',
+            'calendar_by_assignee/static/src/js/bulk_appointment_popup.js',
+            'calendar_by_assignee/static/src/js/day_calendar_renderer.js',
+            'calendar_by_assignee/static/src/js/week_calendar_renderer.js',
+            'calendar_by_assignee/static/src/js/month_calendar_renderer.js',
+            'calendar_by_assignee/static/src/js/cabin_day_calendar_renderer.js',
+            'calendar_by_assignee/static/src/js/cabin_week_calendar_renderer.js',
+            'calendar_by_assignee/static/src/js/cabin_month_calendar_renderer.js',
+            'calendar_by_assignee/static/src/xml/day_calendar_view.xml',
+            'calendar_by_assignee/static/src/xml/week_calendar_view.xml',
+            'calendar_by_assignee/static/src/xml/month_calendar_view.xml',
+            'calendar_by_assignee/static/src/xml/cabin_day_calendar_view.xml',
+            'calendar_by_assignee/static/src/xml/cabin_week_calendar_view.xml',
+            'calendar_by_assignee/static/src/xml/cabin_month_calendar_view.xml',
+            'calendar_by_assignee/static/src/xml/appointment_form_popup.xml',
+            'calendar_by_assignee/static/src/xml/bulk_appointment_popup.xml',
+            'calendar_by_assignee/static/src/scss/calendar_styles.scss',
+            'calendar_by_assignee/static/src/scss/appointment_form_popup.scss',
+            'calendar_by_assignee/static/src/scss/bulk_appointment_popup.scss',
+        ],
+    },
+    'installable': True,
+    'auto_install': False,
+    'application': False,
+    'license': 'LGPL-3',
+}

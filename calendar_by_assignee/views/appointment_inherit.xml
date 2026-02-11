@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Extend hms.appointment form view -->
+        <record id="view_hms_appointment_form_inherit" model="ir.ui.view">
+            <field name="name">hms.appointment.form.inherit</field>
+            <field name="model">hms.appointment</field>
+            <field name="inherit_id" ref="acs_hms.view_hms_appointment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='consultation_type']" position="after">
+                    <!-- Treatment Schedule Fields Group -->
+                    <group string="Treatment Schedule">
+                        <field name="treatment_schedule_id"/>
+                        <field name="treatment_schedule_line_id"/>
+                        <field name="treatment_week"/>
+                        <field name="treatment_session_date"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

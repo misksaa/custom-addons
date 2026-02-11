@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.form.onlineappointment</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="10"/>
+        <field name="inherit_id" ref="acs_hms_base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='appointment_data']" position="after">    
+                <block title="Online Appointment Booking" name="online_appointment_booking_setting_container">
+                    <setting help="No of days for which advance booking is allowed" id="hms_app_allowed_advance_booking_days_setting">
+                        <field name="hms_app_allowed_advance_booking_days" class="o_light_label" string="Allowed Advance Booking Days"/>
+                    </setting>
+                    <setting help="Configure your slot length, 15 or 30 min" id="hms_app_booking_slot_time_setting">
+                        <field name="hms_app_booking_slot_time" class="o_light_label" string="Minutes in each slot"/>
+                    </setting>
+                    <setting help="No of allowed booking per slot, Once slot is fully booked will not be shown to users." id="hms_app_allowed_booking_per_slot_setting">
+                        <field name="hms_app_allowed_booking_per_slot" class="o_light_label" string="Allowed Booking per Slot"/>
+                    </setting>
+                    <setting help="Allow users to pay online for their appointments." id="hms_app_allowed_booking_payment_setting">
+                        <field name="hms_app_allowed_booking_payment" class="o_light_label" string="Online Payment"/>
+                    </setting>
+                    <setting help="Appointment Terms and conditions link." id="acs_hms_app_tc_setting">
+                        <field name="acs_hms_app_tc" class="o_light_label" string="Appointment Terms &amp; Conditions"/>
+                    </setting>
+                    <setting help="Allow users to Select Teleconsultation option during booking. (This option will work only if Video Consultation/Call/Conference module is installed.)" id="acs_hms_app_allowed_video_consultation_setting">
+                        <field name="acs_hms_app_allowed_video_consultation" class="o_light_label" string="Allow Teleconsultation Booking"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

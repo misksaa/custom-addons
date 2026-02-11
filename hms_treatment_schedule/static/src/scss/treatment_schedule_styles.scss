@@ -1,0 +1,1509 @@
+/** @odoo-module **/
+
+// ========== VARIABLES ==========
+$primary-color: #007bff;
+$secondary-color: #17a2b8;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$light-bg: #f8f9fa;
+$border-color: #dee2e6;
+$text-muted: #6c757d;
+$header-gradient: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+
+// ========== MAIN CONTAINER ==========
+.o_treatment_schedule_container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* استخدام ارتفاع كامل الشاشة */
+    width: 100%;
+    background-color: #ffffff;
+    position: relative;
+    overflow: hidden; /* إخفاء التمرير الداخلي */
+}
+
+// ========== CONTENT WRAPPER ==========
+.treatment-schedule-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    gap: 25px;
+    overflow-y: auto; /* التمرير الرأسي للصفحة كاملة */
+    height: calc(100vh - 60px); /* احتساب ارتفاع الهيدر */
+}
+
+// ========== LOADING STATE ==========
+.o_treatment_schedule_loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px;
+
+    p {
+        color: $text-muted;
+        font-size: 14px;
+    }
+}
+
+// ========== HEADER SECTION ==========
+.o_treatment_schedule_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: $header-gradient;
+    border-radius: 0; /* إزالة الزوايا المستديرة */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        flex: 1;
+        justify-content: flex-start;
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .status-label {
+                font-weight: 600;
+                color: white;
+                font-size: 14px;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            }
+
+            .status-buttons {
+                .btn {
+                    padding: 8px 16px;
+                    font-size: 13px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: rgba(255, 255, 255, 0.2);
+                    color: white;
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.3);
+                    }
+
+                    &.active {
+                        border-color: white;
+                        background-color: white;
+                        color: #138496;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+
+    .header-center {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .reference-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .reference-label {
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 14px;
+            }
+
+            .reference-value {
+                font-weight: 700;
+                color: white;
+                font-size: 18px;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        justify-content: flex-end;
+
+        .btn-print {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.3);
+                border-color: white;
+            }
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: white;
+            }
+        }
+
+        .btn-refresh {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: white;
+            }
+        }
+    }
+}
+
+// ========== INFO SECTION ==========
+.o_treatment_schedule_info {
+    background-color: white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 25px;
+
+    .info-grid-row {
+        display: flex;
+        gap: 40px;
+        margin-bottom: 20px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .info-grid-item {
+        flex: 1;
+        min-width: 0;
+
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: $text-muted;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+
+            i {
+                color: $secondary-color;
+                margin-right: 8px;
+                font-size: 14px;
+            }
+        }
+
+        .field-value {
+            .value-display {
+                font-size: 16px;
+                color: #333;
+                font-weight: 500;
+                padding: 12px 0;
+                display: block;
+            }
+
+            .value-container {
+                font-size: 16px;
+                color: #333;
+
+                &.editable {
+                    cursor: pointer;
+                    padding: 12px 15px;
+                    background-color: $light-bg;
+                    border-radius: 6px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    min-height: 48px;
+                    transition: all 0.2s;
+                    border: 1px solid transparent;
+
+                    &:hover {
+                        background-color: #e9ecef;
+                        border-color: $border-color;
+
+                        .edit-icon {
+                            opacity: 1;
+                        }
+                    }
+
+                    .edit-icon {
+                        opacity: 0;
+                        color: $secondary-color;
+                        transition: opacity 0.2s;
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            .edit-container {
+                width: 100%;
+
+                &.autocomplete-container {
+                    position: relative;
+                }
+
+                .input-with-buttons {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+
+                    .form-control {
+                        font-size: 16px;
+                        padding: 12px 15px;
+                        flex: 1;
+                        border-radius: 6px;
+                        border: 1px solid $border-color;
+
+                        &:focus {
+                            border-color: $secondary-color;
+                            box-shadow: 0 0 0 0.3rem rgba($secondary-color, 0.15);
+                        }
+
+                        &.physician-autocomplete {
+                            padding-right: 90px;
+                        }
+                    }
+
+                    .inline-actions {
+                        position: absolute;
+                        right: 8px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        display: flex;
+                        gap: 6px;
+                        background: transparent;
+
+                        .btn-sm {
+                            padding: 6px 10px;
+                            font-size: 13px;
+                            border-radius: 4px;
+
+                            i {
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+
+                .autocomplete-suggestions {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: white;
+                    border: 1px solid $border-color;
+                    border-top: none;
+                    border-radius: 0 0 6px 6px;
+                    max-height: 250px;
+                    overflow-y: auto;
+                    z-index: 1000;
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+
+                    .suggestion-item {
+                        padding: 10px 15px;
+                        cursor: pointer;
+                        font-size: 15px;
+                        display: flex;
+                        align-items: center;
+
+                        &:hover {
+                            background-color: #e3f2fd;
+                            color: $secondary-color;
+                        }
+
+                        i {
+                            color: $text-muted;
+                            font-size: 14px;
+                            margin-right: 10px;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.empty-item {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+}
+
+// ========== TABLE SECTION ==========
+.o_treatment_schedule_table_wrapper {
+    width: 100%;
+    background-color: white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 25px;
+    position: relative;
+    overflow: visible !important;
+}
+
+.o_treatment_schedule_table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+    overflow: visible !important;
+    position: relative;
+
+    thead {
+        th {
+            background: linear-gradient(135deg, $secondary-color 0%, #138496 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            padding: 16px 20px;
+            text-align: center;
+            border: 1px solid darken($secondary-color, 10%);
+            height: 60px;
+
+            &.session-type-header {
+                text-align: left;
+                min-width: 300px;
+
+                .session-type-header-content {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+            }
+
+            &.week-header {
+                min-width: 150px;
+            }
+
+            &.actions-header {
+                min-width: 100px;
+            }
+        }
+    }
+
+    tbody {
+        overflow: visible !important;
+
+        tr {
+            height: 80px;
+            position: relative;
+            overflow: visible !important;
+
+            &:nth-child(even) {
+                background-color: $light-bg;
+            }
+
+            &:hover {
+                background-color: #e3f2fd;
+            }
+        }
+
+        td {
+            padding: 15px 20px;
+            border: 1px solid $border-color;
+            vertical-align: middle;
+            height: 80px;
+            position: relative;
+            overflow: visible !important;
+
+            &.session-type-cell {
+                .session-type-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+
+                    .session-sequence {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 32px;
+                        height: 32px;
+                        background-color: $secondary-color;
+                        color: white;
+                        font-size: 14px;
+                        font-weight: 600;
+                        border-radius: 50%;
+                    }
+
+                    .session-name {
+                        font-weight: 500;
+                        color: #333;
+                        font-size: 16px;
+                    }
+                }
+            }
+
+            &.week-cell {
+                cursor: pointer;
+                padding: 10px;
+                min-width: 150px;
+
+                .week-card {
+                    min-height: 80px;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 8px;
+                    padding: 12px;
+                    transition: all 0.2s ease;
+                    position: relative;
+
+                    &:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .week-card-content {
+                        text-align: center;
+                        width: 100%;
+
+                        .week-date {
+                            display: block;
+                            font-size: 13px;
+                            color: $text-muted;
+                            margin-bottom: 5px;
+                        }
+
+                        .week-number {
+                            display: block;
+                            font-weight: 700;
+                            font-size: 16px;
+                            color: $secondary-color;
+                        }
+                    }
+
+                    .week-card-empty {
+                        color: #ccc;
+
+                        i {
+                            font-size: 22px;
+                        }
+
+                        &:hover {
+                            color: $success-color;
+                        }
+                    }
+                }
+            }
+
+            &.actions-cell {
+                text-align: center;
+
+                .btn-outline-danger {
+                    opacity: 0.6;
+                    padding: 8px 12px;
+                    font-size: 14px;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            &.add-session-cell {
+                position: relative;
+                padding: 20px;
+                border-top: 3px dashed $border-color;
+                border-bottom: 3px dashed $border-color;
+                background-color: #f9f9f9;
+                overflow: visible !important;
+                z-index: 100;
+
+                .btn-add-session-in-table {
+                    width: 100%;
+                    background: $header-gradient;
+                    border: none;
+                    padding: 12px 20px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    border-radius: 6px;
+                    transition: all 0.3s;
+
+                    &:hover {
+                        background: linear-gradient(135deg, darken($secondary-color, 10%) 0%, darken(#138496, 10%) 100%);
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+                    }
+                }
+            }
+
+            &.empty-cell {
+                border-top: 3px dashed $border-color;
+                border-bottom: 3px dashed $border-color;
+                background-color: #f9f9f9;
+                overflow: visible;
+            }
+
+            &.no-sessions {
+                text-align: center;
+                padding: 60px 20px;
+
+                .no-data-message {
+                    i {
+                        font-size: 60px;
+                        margin-bottom: 20px;
+                        color: #ddd;
+                        display: block;
+                    }
+
+                    p {
+                        font-size: 18px;
+                        margin-bottom: 20px;
+                        color: $text-muted;
+                    }
+                }
+            }
+        }
+
+        .add-session-row {
+            background-color: #f9f9f9 !important;
+            position: relative;
+            overflow: visible !important;
+            z-index: 100;
+
+            &:hover {
+                background-color: #f9f9f9 !important;
+            }
+        }
+    }
+}
+
+// ========== INLINE SEARCH FOR ADD SESSION ==========
+.inline-search-container {
+    position: relative;
+    width: 100%;
+    position: static;
+
+    .inline-search-input {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 16px;
+        border: 2px solid $secondary-color;
+        border-radius: 6px;
+        transition: all 0.3s;
+        position: relative;
+
+        &:focus {
+            box-shadow: 0 0 0 0.3rem rgba($secondary-color, 0.25);
+            outline: none;
+        }
+    }
+
+    .inline-search-suggestions {
+        position: fixed !important;
+        background-color: white;
+        border: 1px solid $border-color;
+        border-radius: 6px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 99999 !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .suggestion-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background-color: #e3f2fd;
+                color: $secondary-color;
+                transform: translateX(5px);
+            }
+
+            i {
+                color: $text-muted;
+                margin-right: 10px;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+// ========== SPECIAL INSTRUCTIONS SECTION ==========
+.special-instructions-container {
+    background-color: white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+
+    .special-instructions-header {
+        margin-bottom: 15px;
+
+        label {
+            font-weight: 600;
+            color: $text-muted;
+            margin-bottom: 12px;
+            font-size: 16px;
+
+            i {
+                color: $secondary-color;
+                margin-right: 8px;
+                font-size: 16px;
+            }
+        }
+    }
+
+    .special-instructions-content {
+        .instructions-content {
+            background-color: $light-bg;
+            border-radius: 6px;
+            padding: 18px;
+            min-height: 120px;
+            cursor: pointer;
+            position: relative;
+            white-space: pre-wrap;
+            font-size: 16px;
+            line-height: 1.5;
+            transition: all 0.2s;
+
+            &.editable {
+                &:hover {
+                    background-color: #e9ecef;
+                    border-color: $border-color;
+
+                    .edit-icon {
+                        opacity: 1;
+                    }
+                }
+
+                .edit-icon {
+                    position: absolute;
+                    top: 12px;
+                    right: 12px;
+                    opacity: 0;
+                    color: $secondary-color;
+                    transition: opacity 0.2s;
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .edit-field-container {
+            textarea {
+                width: 100%;
+                min-height: 150px;
+                resize: vertical;
+                font-size: 16px;
+                padding: 12px 15px;
+                border-radius: 6px;
+                border: 1px solid $border-color;
+
+                &:focus {
+                    border-color: $secondary-color;
+                    box-shadow: 0 0 0 0.3rem rgba($secondary-color, 0.15);
+                }
+            }
+
+            .edit-actions {
+                margin-top: 15px;
+                display: flex;
+                gap: 10px;
+            }
+        }
+    }
+}
+
+// ========== HOVER CARD POPUP ==========
+.o_hover_card_popup {
+    position: fixed;
+    z-index: 10000;
+    background-color: white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    min-width: 250px;
+    max-width: 350px;
+    pointer-events: none;
+
+    .hover-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 18px;
+        background: $header-gradient;
+        color: white;
+        border-radius: 8px 8px 0 0;
+        font-weight: 600;
+        font-size: 14px;
+
+        .week-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 5px;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .hover-card-body {
+        padding: 15px 18px;
+
+        .hover-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            i {
+                color: $secondary-color;
+                width: 18px;
+                text-align: center;
+                font-size: 14px;
+            }
+
+            span {
+                font-size: 14px;
+                color: #333;
+            }
+
+            &.appointments {
+                display: block;
+
+                .appointment-list {
+                    margin-top: 5px;
+                    padding-left: 20px;
+
+                    .appointment-item {
+                        font-size: 12px;
+                        margin-bottom: 3px;
+                        display: flex;
+                        align-items: center;
+
+                        i {
+                            font-size: 6px;
+                            margin-right: 5px;
+                            color: $secondary-color;
+                        }
+
+                        .appointment-name {
+                            font-weight: 500;
+                        }
+
+                        .appointment-date {
+                            color: #6c757d;
+                            margin-left: auto;
+                            font-size: 11px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+// ========== SESSION POPUP STYLES ==========
+.o_session_popup_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.o_session_popup_container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    min-width: 450px;
+    max-width: 550px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.o_session_popup_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 25px;
+    background: $header-gradient;
+    color: white;
+
+    .popup-title {
+        margin: 0;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+.o_session_popup_body {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+
+    .popup-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        color: $text-muted;
+        font-size: 16px;
+    }
+
+    // Tab styles
+    .nav-tabs {
+        border-bottom: 2px solid $border-color;
+
+        .nav-link {
+            border: none;
+            color: $text-muted;
+            font-weight: 500;
+
+            &:hover {
+                color: $secondary-color;
+            }
+
+            &.active {
+                color: $secondary-color;
+                border-bottom: 2px solid $secondary-color;
+                background-color: transparent;
+            }
+        }
+    }
+
+    .tab-content {
+        padding: 15px 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: $text-muted;
+            margin-bottom: 8px;
+
+            &.required::after {
+                content: " *";
+                color: $danger-color;
+            }
+
+            i {
+                color: $secondary-color;
+                margin-right: 8px;
+                font-size: 14px;
+            }
+        }
+
+        .form-control {
+            font-size: 16px;
+            padding: 12px 15px;
+
+            &:focus {
+                border-color: $secondary-color;
+                box-shadow: 0 0 0 0.3rem rgba($secondary-color, 0.15);
+            }
+        }
+
+        .readonly-value {
+            padding: 12px 15px;
+            background-color: $light-bg;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333;
+
+            i {
+                color: $secondary-color;
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .autocomplete-container {
+        position: relative;
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid $border-color;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+
+            .suggestion-item {
+                padding: 12px 15px;
+                cursor: pointer;
+                font-size: 15px;
+
+                &:hover {
+                    background-color: #e3f2fd;
+                    color: $secondary-color;
+                }
+
+                i {
+                    color: $text-muted;
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    .selected-product {
+        .badge {
+            font-size: 14px;
+            padding: 8px 15px;
+        }
+    }
+
+    .quick-actions {
+        .form-label {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .btn-group {
+            .btn {
+                flex: 1;
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+        }
+    }
+
+    // Appointments styles
+    .current-appointments {
+        .list-group-item {
+            border-left: 3px solid $success-color;
+
+            &.active {
+                border-left-color: white;
+            }
+        }
+    }
+
+    .available-appointments {
+        max-height: 300px;
+        overflow-y: auto;
+
+        .list-group-item {
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+                background-color: #f8f9fa;
+            }
+
+            &.active {
+                background-color: $primary-color;
+                border-color: $primary-color;
+                color: white;
+            }
+        }
+    }
+
+    .appointment-search {
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-color: #ced4da;
+        }
+    }
+}
+
+.o_session_popup_footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 25px;
+    background-color: $light-bg;
+    border-top: 1px solid $border-color;
+
+    .footer-left {
+        .btn-delete {
+            background-color: $danger-color;
+            border-color: $danger-color;
+            padding: 10px 18px;
+            font-size: 15px;
+
+            &:hover {
+                background-color: darken($danger-color, 10%);
+            }
+        }
+    }
+
+    .footer-right {
+        display: flex;
+        gap: 12px;
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 15px;
+        }
+    }
+}
+
+// ========== Badge for appointments count ==========
+.appointments-badge {
+    .badge {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 10px;
+    }
+}
+
+// Week card with appointments
+.week-card {
+    .appointments-badge {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+
+    &:hover .appointments-badge .badge {
+        background-color: darken($success-color, 10%);
+    }
+}
+
+// ========== RESPONSIVE ==========
+@media (max-width: 992px) {
+    .o_treatment_schedule_header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+
+        .header-left,
+        .header-center,
+        .header-right {
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .header-center {
+            order: -1;
+            margin-bottom: 10px;
+        }
+    }
+
+    .o_treatment_schedule_info {
+        padding: 20px;
+
+        .info-grid-row {
+            flex-direction: column;
+            gap: 20px;
+
+            .info-grid-item {
+                width: 100% !important;
+            }
+        }
+    }
+
+    .o_treatment_schedule_table_wrapper {
+        padding: 20px;
+        overflow-x: auto;
+
+        .o_treatment_schedule_table {
+            font-size: 14px;
+            min-width: 800px;
+
+            thead th {
+                padding: 12px 15px;
+                font-size: 13px;
+
+                &.session-type-header {
+                    min-width: 250px;
+                }
+
+                &.week-header {
+                    min-width: 130px;
+                }
+            }
+
+            tbody td {
+                padding: 12px 15px;
+
+                &.session-type-cell {
+                    .session-type-info {
+                        .session-sequence {
+                            width: 28px;
+                            height: 28px;
+                            font-size: 13px;
+                        }
+
+                        .session-name {
+                            font-size: 14px;
+                        }
+                    }
+                }
+
+                &.week-cell {
+                    .week-card {
+                        min-height: 70px;
+                        padding: 10px;
+
+                        .week-card-content {
+                            .week-date {
+                                font-size: 12px;
+                            }
+
+                            .week-number {
+                                font-size: 14px;
+                            }
+                        }
+                    }
+                }
+
+                &.add-session-cell {
+                    padding: 15px;
+
+                    .btn-add-session-in-table {
+                        padding: 10px 15px;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+
+    .special-instructions-container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .o_session_popup_container {
+        min-width: auto;
+        margin: 15px;
+    }
+
+    .treatment-schedule-content-wrapper {
+        padding: 15px;
+    }
+}
+
+// ========== APPOINTMENTS GRID LAYOUT ==========
+.appointments-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* دائماً عمودين */
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.appointment-card {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 11px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+    overflow: hidden;
+    cursor: pointer;
+    height: fit-content;
+    min-height: 50px;
+
+    &:hover {
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        transform: translateY(-1px);
+        background-color: #f0f8ff;
+    }
+
+    .appointment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 4px;
+
+        .appointment-ref {
+            font-weight: 600;
+            color: #333;
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70%;
+        }
+
+        .appointment-status {
+            font-size: 8px;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    }
+
+    .appointment-body {
+        .appointment-physician {
+            display: flex;
+            align-items: center;
+            font-size: 9px;
+            color: #666;
+            margin-bottom: 2px;
+
+            i {
+                font-size: 8px;
+            }
+        }
+
+        .appointment-time {
+            display: flex;
+            align-items: center;
+            font-size: 9px;
+            color: #888;
+
+            i {
+                font-size: 8px;
+            }
+        }
+    }
+
+    // Different styles based on appointment index
+    &.appointment-index-1 {
+        border-left: 3px solid #007bff;
+    }
+
+    &.appointment-index-2 {
+        border-left: 3px solid #28a745;
+    }
+
+    &.appointment-index-3 {
+        border-left: 3px solid #ffc107;
+    }
+
+    &.appointment-index-4 {
+        border-left: 3px solid #dc3545;
+    }
+}
+
+// Special handling for odd number of appointments (3 appointments)
+.appointment-card:nth-child(3):nth-last-child(1) {
+    grid-column: span 2;
+    width: 50%;
+    margin-left: 25%;
+}
+
+// If there's only one appointment, make it centered
+.appointment-card:only-child {
+    grid-column: span 2;
+    width: 50%;
+    margin-left: 25%;
+}
+
+.more-appointments {
+    text-align: center;
+    margin-top: 4px;
+    grid-column: span 2;
+
+    .badge {
+        font-size: 9px;
+        padding: 3px 6px;
+        background-color: #6c757d;
+    }
+}
+
+// ========== WEEK CARD WITH APPOINTMENTS ==========
+.week-card {
+    position: relative;
+    min-height: 120px;
+    height: auto;
+    padding: 10px;
+
+    .week-card-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .week-info {
+            margin-bottom: 8px;
+
+            .week-date, .week-number {
+                display: flex;
+                align-items: center;
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 2px;
+
+                i {
+                    font-size: 11px;
+                    color: #007bff;
+                    width: 16px;
+                }
+            }
+
+            .week-number {
+                i {
+                    color: #28a745;
+                }
+            }
+        }
+
+        .week-card-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #ccc;
+
+            i {
+                font-size: 24px;
+                margin-bottom: 5px;
+            }
+
+            small {
+                font-size: 10px;
+            }
+
+            &:hover {
+                color: #007bff;
+            }
+        }
+    }
+}
+
+// ========== HOVER CARD APPOINTMENTS ==========
+.o_hover_card_popup {
+    .hover-card-body {
+        .hover-item.appointments {
+            .appointment-list {
+                margin-top: 8px;
+                padding-left: 10px;
+                border-left: 2px solid #007bff;
+
+                .appointment-item {
+                    display: flex;
+                    align-items: center;
+                    font-size: 12px;
+                    margin-bottom: 4px;
+                    cursor: pointer;
+
+                    i {
+                        color: #007bff;
+                        margin-right: 6px;
+                        font-size: 6px;
+                    }
+
+                    .appointment-name {
+                        font-weight: 500;
+                        color: #333;
+                        flex: 1;
+                    }
+
+                    .appointment-date {
+                        color: #666;
+                        font-size: 11px;
+                    }
+
+                    &:hover {
+                        background-color: #f0f8ff;
+                        padding: 2px 4px;
+                        border-radius: 3px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ========== ADJUST WEEK CELL HEIGHT FOR APPOINTMENTS ==========
+.week-cell {
+    height: auto;
+    min-height: 140px;
+
+    .week-card {
+        min-height: 140px;
+    }
+}
+
+// ========== RESPONSIVE ADJUSTMENTS ==========
+@media (max-width: 768px) {
+    .appointments-container {
+        grid-template-columns: 1fr;
+
+        .appointment-card {
+            grid-column: span 1 !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+        }
+    }
+
+    .week-cell {
+        min-height: 150px;
+
+        .week-card {
+            min-height: 150px;
+        }
+    }
+}

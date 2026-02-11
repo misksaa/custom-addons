@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.hospitalization</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="10"/>
+        <field name="inherit_id" ref="acs_hms.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='hospitalization']" position="after">
+                <block title="Portal" name="portal_setting_container">
+                    <setting help="Create user for each patient when new patient is registered in system. (Please do not forget to set email when creating patient else it will not create related user.)" id="create_auto_users_setting">
+                        <field name="create_auto_users" class="o_light_label" string="Portal User Creation"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription -->
+
+    <record id="acs_subscription_form_view" model="ir.ui.view">
+        <field name="name">acs.subscription.hms.inherit</field>
+        <field name="model">acs.subscription</field>
+        <field name="inherit_id" ref="acs_subscription.acs_subscription_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="patient_id" readonly="state!='draft'"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

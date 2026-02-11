@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Treatment Line Popup Template -->
+    <t t-name="TreatmentSchedule.LinePopup">
+        <div class="ts-line-popup-container">
+            <!-- Backdrop -->
+            <div class="ts-popup-backdrop" t-on-click="onClose"></div>
+            
+            <!-- Popup -->
+            <div class="ts-popup ts-line-popup">
+                <!-- Header -->
+                <div class="ts-popup-header" t-attf-class="{{ state.mode === 'edit_cell' ? 'ts-popup-header-cell' : '' }}">
+                    <h4 t-esc="getTitle()"/>
+                    <button class="ts-popup-close" t-on-click="onClose">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Content -->
+                <div class="ts-popup-content">
+                    <!-- Loading -->
+                    <div t-if="state.loading" class="ts-popup-loading">
+                        <i class="fa fa-spinner fa-spin"></i>
+                        <span>Saving...</span>
+                    </div>
+                    
+                    <!-- Product/Session Type Field -->
+                    <t t-if="showProductField()">
+                        <div class="ts-popup-field">
+                            <label class="ts-label">
+                                <i class="fa fa-cube me-1"></i>
+                                Session Type
+                            </label>
+                            <div class="ts-autocomplete-container">
+                                <input type="text" 
+                                       class="ts-input" 
+                                       t-att-value="state.productName || state.searchTerm"
+                                       t-on-input="onSearchChange"
+                                       t-att-placeholder="state.mode === 'create' ? 'Search and select session type...' : 'Change session type...'"
+                                       t-att-disabled="state.loading"/>
+                                <div t-if="state.showSuggestions" class="ts-suggestions-dropdown">
+                                    <t t-if="state.suggestions.length === 0">
+                                        <div class="ts-suggestion-empty">
+                                            <i class="fa fa-search me-1"></i>
+                                            No results found
+                                        </div>
+                                    </t>
+                                    <div t-foreach="state.suggestions" t-as="product" t-key="product.id"
+                                         class="ts-suggestion-item"
+                                         t-on-click="() => this.onSelectProduct(product)">
+                                        <i class="fa fa-cube me-2 text-muted"></i>
+                                        <span class="ts-suggestion-name" t-esc="product.name"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="ts-field-hint">
+                                <t t-if="state.mode === 'create'">
+                                    Type to search for available session types
+                                </t>
+                                <t t-else="">
+                                    Type to change the session type
+                                </t>
+                            </small>
+                        </div>
+                    </t>
+                    
+                    <!-- Week Fields (for cell editing) -->
+                    <t t-if="showWeekFields()">
+                        <div class="ts-popup-field">
+                            <label class="ts-label">
+                                <i class="fa fa-calendar me-1"></i>
+                                Date
+                            </label>
+                            <input type="date" 
+                                   class="ts-input" 
+                                   t-att-value="state.weekDate"
+                                   t-on-change="onWeekDateChange"
+                                   t-att-disabled="state.loading"/>
+                        </div>
+                        
+                        <div class="ts-popup-field">
+                            <label class="ts-label">
+                                <i class="fa fa-hashtag me-1"></i>
+                                Session Number / Notes
+                            </label>
+                            <input type="text" 
+                                   class="ts-input" 
+                                   t-att-value="state.weekValue"
+                                   t-on-input="onWeekValueChange"
+                                   placeholder="Enter session number or notes..."
+                                   t-att-disabled="state.loading"/>
+                            <small class="ts-field-hint">
+                                Enter session number (e.g., "1", "2") or notes for this week
+                            </small>
+                        </div>
+                    </t>
+                </div>
+                
+                <!-- Footer -->
+                <div class="ts-popup-footer">
+                    <t t-if="showDeleteButton()">
+                        <button class="btn btn-danger me-auto" 
+                                t-on-click="onDelete"
+                                t-att-disabled="state.loading">
+                            <i class="fa fa-trash me-1"></i>
+                            Delete
+                        </button>
+                    </t>
+                    <button class="btn btn-secondary" 
+                            t-on-click="onClose"
+                            t-att-disabled="state.loading">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" 
+                            t-on-click="onSave"
+                            t-att-disabled="state.loading">
+                        <i t-if="state.loading" class="fa fa-spinner fa-spin me-1"></i>
+                        <i t-else="" class="fa fa-check me-1"></i>
+                        <t t-if="state.mode === 'create'">Add</t>
+                        <t t-else="">Save</t>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="CalendarByAssignee.CabinDayView">
+        <div class="o_cabin_day_calendar_container h-100 d-flex flex-column" t-on-mousemove="onMouseMove">
+            <div class="o_calendar_header d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
+                <div class="d-flex align-items-center">
+                    <h4 class="mb-0 fw-bold text-primary">
+                        <t t-esc="state.currentDateLabel"/>
+                    </h4>
+                    <div class="ms-3 btn-group">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" t-on-click="onPreviousDay">
+                            <i class="fa fa-chevron-left"/>
+                            Previous
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" t-on-click="onToday">
+                            Today
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" t-on-click="onNextDay">
+                            Next
+                            <i class="fa fa-chevron-right"/>
+                        </button>
+                    </div>
+
+                    <!-- Search Field Selector -->
+                    <div class="ms-3">
+                        <select class="form-select form-select-sm search-field-selector"
+                                t-att-value="state.searchField"
+                                t-on-change="onSearchFieldChange"
+                                style="width: 140px;">
+                            <t t-foreach="state.searchFields" t-as="field" t-key="field_index">
+                                <option t-att-value="field.value" t-esc="field.label"/>
+                            </t>
+                        </select>
+                    </div>
+
+                    <!-- Enhanced search component with multiple selections -->
+                    <div class="ms-2 position-relative" style="z-index: 9999;">
+                        <div class="multiple-select-container">
+                            <!-- Combined Search Input and Selected Items -->
+                            <div class="selected-items-container d-flex flex-wrap align-items-center p-2 border rounded bg-white"
+                                 style="min-width: 350px; max-width: 500px; min-height: 42px; cursor: text;">
+
+                                <!-- Selected Search Terms -->
+                                <t t-foreach="getCurrentSearchTerms()" t-as="term" t-key="term_index">
+                                    <span class="selected-item badge bg-primary me-1 mb-1 d-flex align-items-center"
+                                          style="font-size: 0.8em; padding: 5px 10px;">
+                                        <span t-esc="term"/>
+                                        <i class="fa fa-times ms-2"
+                                           style="cursor: pointer; font-size: 0.8em; opacity: 0.8;"
+                                           t-on-click="() => removeSearchTerm(term_index)"/>
+                                    </span>
+                                </t>
+
+                                <!-- Search Input -->
+                                <input type="text" class="border-0 flex-grow-1 outline-none"
+                                       placeholder="Search..."
+                                       t-att-value="state.searchInput"
+                                       t-on-input="onSearchInputChange"
+                                       t-on-keypress="onSearchKeyPress"
+                                       t-on-focus="() => { state.showSearchSuggestions = true; }"
+                                       t-on-blur="hideSearchSuggestions"
+                                       style="background: transparent; min-width: 120px; padding: 0 8px;"/>
+
+                                <!-- Clear Search Button -->
+                                <t t-if="getCurrentSearchTerms().length > 0">
+                                    <i class="fa fa-times ms-2 text-muted" style="cursor: pointer;"
+                                       t-on-click="clearSearch"
+                                       t-att-title="'Clear search'"/>
+                                </t>
+                            </div>
+
+                            <!-- Search Suggestions Dropdown -->
+                            <t t-if="state.showSearchSuggestions">
+                                <div class="suggestions-dropdown position-absolute bg-white border rounded shadow-lg mt-1"
+                                     style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 10000;">
+                                    <t t-set="searchSuggestions" t-value="getSearchSuggestions()"/>
+                                    <t t-if="searchSuggestions.length === 0">
+                                        <div class="p-3 text-muted text-center">
+                                            <t t-if="state.searchInput">
+                                                No
+                                                <t t-esc="state.searchField"/>
+                                                found for "<t t-esc="state.searchInput"/>"
+                                            </t>
+                                            <t t-else="">
+                                                Please enter search term
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-foreach="searchSuggestions" t-as="suggestion" t-key="suggestion_index">
+                                            <div class="suggestion-item p-3 border-bottom cursor-pointer"
+                                                 t-on-click="() => onSearchSuggestionClick(suggestion)">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="d-flex flex-column flex-grow-1 ms-2">
+                                                        <!-- Status Field Display -->
+                                                        <t t-if="state.searchField === 'status'">
+                                                            <strong class="text-dark text-capitalize"
+                                                                    t-esc="suggestion.label"/>
+                                                            <small class="text-muted">Status:
+                                                                <span class="text-lowercase" t-esc="suggestion.value"/>
+                                                            </small>
+                                                        </t>
+                                                        <!-- Physician Field Display -->
+                                                        <t t-elif="state.searchField === 'physician'">
+                                                            <strong class="text-dark" t-esc="suggestion.name"/>
+                                                            <small class="text-muted"
+                                                                   t-esc="suggestion.department_id[1] or 'No department'"/>
+                                                        </t>
+                                                        <!-- Patient Field Display -->
+                                                        <t t-elif="state.searchField === 'patient'">
+                                                            <strong class="text-dark" t-esc="suggestion.name"/>
+                                                            <small class="text-muted">
+                                                                <t t-if="suggestion.phone">Phone:
+                                                                    <t t-esc="suggestion.phone"/>
+                                                                </t>
+                                                                <t t-if="suggestion.mobile">, Mobile:
+                                                                    <t t-esc="suggestion.mobile"/>
+                                                                </t>
+                                                            </small>
+                                                        </t>
+                                                        <!-- Appointment Field Display -->
+                                                        <t t-elif="state.searchField === 'appointment'">
+                                                            <strong class="text-dark" t-esc="suggestion.name"/>
+                                                            <small class="text-muted"
+                                                                   t-esc="suggestion.patient_id[1] or 'No patient'"/>
+                                                        </t>
+                                                        <!-- Cabin Field Display -->
+                                                        <t t-elif="state.searchField === 'cabin'">
+                                                            <strong class="text-dark" t-esc="suggestion.name"/>
+                                                            <small class="text-muted">Consultation Room</small>
+                                                        </t>
+                                                        <!-- Default Display -->
+                                                        <t t-else="">
+                                                            <strong class="text-dark"
+                                                                    t-esc="suggestion.name or suggestion"/>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group ms-2" role="group">
+                    <!-- Physician Views Dropdown -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i class="fa fa-user-md"/>
+                            Physician Views
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" t-on-click="onSwitchToDayView">
+                                    <i class="fa fa-calendar-day"/>
+                                    Day View
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" t-on-click="onSwitchToWeekView">
+                                    <i class="fa fa-calendar-week"/>
+                                    Week View
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" t-on-click="onSwitchToMonthView">
+                                    <i class="fa fa-calendar-alt"/>
+                                    Month View
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Cabin Views Dropdown -->
+                    <div class="btn-group ms-1">
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i class="fa fa-clinic-medical"/>
+                            Clinic Views
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" t-on-click="onSwitchToCabinDayView">
+                                    <i class="fa fa-calendar-day"/>
+                                    Clinic Day View
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" t-on-click="onSwitchToCabinWeekView">
+                                    <i class="fa fa-calendar-week"/>
+                                    Clinic Week View
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" t-on-click="onSwitchToCabinMonthView">
+                                    <i class="fa fa-calendar-alt"/>
+                                    Clinic Month View
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- List View Button -->
+                    <button type="button" class="btn btn-info btn-sm ms-1" t-on-click="onSwitchToBaseListView">
+                        <i class="fa fa-list"/>
+                        List View
+                    </button>
+                </div>
+            </div>
+
+            <!-- Calendar Content -->
+            <div class="o_calendar_content flex-grow-1 overflow-auto">
+                <t t-if="getFilteredCabins().length === 0">
+                    <div class="alert alert-warning m-4 text-center">
+                        <i class="fa fa-exclamation-triangle me-2"></i>
+                        No cabins found matching your search criteria.
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="o_calendar_horizontal_scroll">
+                        <table class="table table-bordered table-sm mb-0 o_cabin_day_calendar_table">
+                            <thead class="sticky-top bg-white">
+                                <tr>
+                                    <th class="text-center time-column">
+                                        <small class="text-muted">TIME</small>
+                                    </th>
+                                    <t t-foreach="getFilteredCabins()" t-as="cabin" t-key="cabin.id">
+                                        <th class="text-center cabin-column"
+                                            style="background-color: #6c757d; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 30vw;">
+                                            <div class="d-flex align-items-center justify-content-center p-2">
+                                                <span class="cabin-color-indicator me-2"
+                                                      t-att-style="'background-color: ' + getCabinColor(cabin.id) + '; width: 16px; height: 16px; border-radius: 50%;'"/>
+                                                <div class="d-flex flex-column">
+                                                    <strong t-esc="getCabinDisplayName(cabin)"/>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.timeSlots" t-as="timeSlot" t-key="timeSlot.hourFloat">
+                                    <tr class="time-slot-row" style="height: 50px; min-height: 50px;">
+                                        <td class="text-center time-slot-cell" style="vertical-align: middle;">
+                                            <small class="text-muted fw-bold" t-esc="timeSlot.label"/>
+                                        </td>
+                                        <t t-foreach="getFilteredCabins()" t-as="cabin" t-key="cabin.id">
+                                            <td class="event-slot-cell p-1"
+                                                style="position: relative; overflow: visible; height: 50px; width: 30vw;"
+                                                t-att-style="getCabinBreakPeriodStyle(cabin.id, formatDateForBackend(state.currentDate), timeSlot.hour, timeSlot.minute)"
+                                                t-att-title="getCabinBreakPeriodTooltip(cabin.id, formatDateForBackend(state.currentDate), timeSlot.hour, timeSlot.minute)"
+                                                t-on-dragover="(ev) => onSlotDragOver(ev)"
+                                                t-on-dragleave="(ev) => onSlotDragLeave(ev)"
+                                                t-on-drop="(ev) => onSlotDrop(ev, {cabinId: cabin.id, hour: timeSlot.hour, minute: timeSlot.minute})"
+                                                t-on-click="(ev) => onSlotClick({cabinId: cabin.id, hour: timeSlot.hour, minute: timeSlot.minute})">
+
+                                                <!-- Container for events -->
+                                                <div class="events-container" style="position: relative; width: 100%; height: 100%;">
+                                                    <!-- SPANNING: Get events that START in this slot -->
+                                                    <t t-set="slotEvents"
+                                                       t-value="getEventsForSlot(cabin.id, timeSlot.hour, timeSlot.minute)"/>
+
+                                                    <!-- SPANNING: Events with calculated width and height -->
+                                                    <t t-foreach="slotEvents" t-as="event" t-key="event.id">
+                                                        <div class="o_calendar_event"
+                                                             t-att-style="getEventCombinedStyle(event, slotEvents)"
+                                                             t-on-click="(ev) => { ev.stopPropagation(); onEventClick(event.id); }"
+                                                             t-on-mouseover="(ev) => onEventMouseOver(ev, event)"
+                                                             t-on-mouseout="(ev) => onEventMouseOut(ev, event)"
+                                                             draggable="true"
+                                                             t-on-dragstart="(ev) => onEventDragStart(ev, event)">
+
+                                                            <div class="event-content">
+                                                                <!-- الصف الأول: اسم المريض (يسار) واسم الدكتور (يمين) -->
+                                                                <div class="event-row-1">
+                                                                    <div class="event-left">
+                                                                        <div class="event-patient-name">
+                                                                            <t t-esc="getEventPatientDisplay(event)"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="event-right">
+                                                                        <div class="event-doctor-name">
+                                                                            <t t-esc="getEventDoctorDisplay(event)"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- الصف الثاني: كود المريض (يسار) ورقم الهاتف (يمين) -->
+                                                                <div class="event-row-2">
+                                                                    <div class="event-left">
+                                                                        <div class="event-patient-code">
+                                                                            <t t-esc="getEventPatientCodeDisplay(event)"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="event-right">
+                                                                        <div class="event-phone">
+                                                                            <t t-esc="getEventPatientPhoneDisplay(event)"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </div>
+
+            <t t-if="state.showEventPopup and state.popupEvent">
+                <div class="o_calendar_event_popup"
+                     t-att-style="'left: ' + state.popupPosition.x + 'px; top: ' + state.popupPosition.y + 'px'"
+                     t-on-mouseenter="onPopupMouseEnter"
+                     t-on-mouseleave="onPopupMouseLeave">
+                    <div class="popup-header d-flex justify-content-center align-items-center p-2 text-white"
+                         t-att-style="getEventPopupStyle(state.popupEvent)">
+                        <h6 class="mb-0 fw-bold text-white text-center">
+                            Appointment:
+                            <t t-esc="state.popupEvent.name"/>
+                        </h6>
+                        <span class="px-4 py-2 fw-bold"
+                              t-esc="state.popupEvent.appointment_status"/>
+                    </div>
+                    <div class="popup-content p-3">
+                        <t t-set="eventInfo" t-value="getEventPopupInfo(state.popupEvent)"/>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Physician
+                                    </span>
+                                    <span class="fw-bold">
+                                        <span class="fw-bold" t-esc="eventInfo.physician"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Patient
+                                    </span>
+                                    <span class="fw-bold">
+                                        <t t-esc="eventInfo.patient"/>
+                                        <t t-if="eventInfo.patient_code and eventInfo.patient_code.trim()">
+                                            <span class="text-muted"> (<t t-esc="eventInfo.patient_code"/>)
+                                            </span>
+                                        </t>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Gender
+                                    </span>
+                                    <span class="fw-bold">
+                                        <t t-if="state.popupEvent.patient_gender and state.popupEvent.patient_gender.trim()">
+                                            <t t-esc="state.popupEvent.patient_gender"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted">Not Specified</span>
+                                        </t>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Mobile
+                                    </span>
+                                    <span class="fw-bold">
+                                        <t t-if="state.popupEvent.patient_mobile and state.popupEvent.patient_mobile.trim()">
+                                            <t t-esc="state.popupEvent.patient_mobile"/>
+                                        </t>
+                                        <t t-elif="state.popupEvent.patient_phone and state.popupEvent.patient_phone.trim()">
+                                            <t t-esc="state.popupEvent.patient_phone"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted">N/A</span>
+                                        </t>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Date</span>
+                                    <span t-esc="eventInfo.date"/>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Time</span>
+                                    <span class="fw-bold" t-esc="eventInfo.startTime + ' - ' + eventInfo.endTime"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Clinic
+                                    </span>
+                                    <span t-esc="eventInfo.cabin"/>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-item">
+                                    <span class="text-muted fw-bold d-block mb-1" style="font-size: 0.85em;">Duration</span>
+                                    <span t-esc="eventInfo.duration"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="info-item">
+                                    <div class="notes-label mb-2 pb-1" style="border-bottom: 1px solid #dee2e6;">
+                                        <span class="text-muted fw-bold" style="font-size: 0.99em;">Notes</span>
+                                    </div>
+                                    <div class="notes-content text-center"
+                                         style="font-size: 0.9em; min-height: 40px; max-height: 100px; overflow-y: auto;">
+                                        <t t-if="eventInfo.notes and eventInfo.notes.trim()">
+                                            <t t-esc="eventInfo.notes"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted">No notes</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </t>
+
+            <t t-if="state.showAppointmentPopup">
+                <AppointmentFormPopup
+                        mode="state.popupMode"
+                        appointmentId="state.currentAppointmentId"
+                        slotData="state.slotData"
+                        close="closeAppointmentPopup"
+                        onSave="refreshAfterPopup"
+                />
+            </t>
+        </div>
+    </t>
+</templates>

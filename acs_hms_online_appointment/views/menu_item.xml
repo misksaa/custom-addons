@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    
+    <!-- Appointment -->
+    <menuitem id="menu_action_online_appointments" name="Online Appointments"
+        parent="acs_hms.action_main_menu_appointmnet_opd" sequence="50" action="action_online_appointments"/>
+
+    <!-- Calendar Views -->
+    <menuitem id="menu_appointment_calendar_main" name="Appointment Calendar"
+        parent="acs_hms.action_main_menu_appointmnet_opd" sequence="60"/>
+
+    <menuitem id="menu_appointment_schedule_slot_lines" name="Appointment Slots"
+        parent="acs_hms.action_main_menu_appointmnet_opd" sequence="70" action="action_appointment_schedule_slot_lines"/>
+
+</odoo>

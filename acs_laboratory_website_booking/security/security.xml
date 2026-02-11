@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="acs_laboratory_request_rule" model="ir.rule">
+            <field name="name">Portal Patient's Own and Family Lab Request</field>
+            <field name="model_id" ref="acs_laboratory.model_acs_laboratory_request"/>
+            <field name="domain_force">['|',('patient_id.acs_family_partner_ids','in',[user.partner_id.id]),('patient_id.partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+        </record>
+
+        <record id="acs_laboratory_result_rule" model="ir.rule">
+            <field name="name">Portal Patient's Own and Family Lab results</field>
+            <field name="model_id" ref="acs_laboratory.model_patient_laboratory_test"/>
+            <field name="domain_force">['|',('patient_id.acs_family_partner_ids','in',[user.partner_id.id]),('patient_id.partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

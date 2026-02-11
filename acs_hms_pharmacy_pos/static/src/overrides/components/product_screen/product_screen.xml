@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="acs_hms_pharmacy_pos.ProductScreen" t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
+		<xpath expr="//Orderline" position="inside" >
+            <t t-if="line.get_prescription_order()">
+                <li class="info orderline-prescription-order ms-2">
+                    <i class="fa fa-shopping-basket me-1" role="img" aria-label="SO" title="SO"/>
+                    <t t-esc="line.get_prescription_order().name" />
+                </li>
+                <li class="info acs-kit-data">
+                    <t t-set="pol_data" t-value="line.get_prescription_order()"/>
+                    <t t-if="pol_data['is_kit_product']">
+                        (Part of KIT: <span t-esc="pol_data['kit_product_name']"/> x <span class="mr8" t-esc="pol_data['kit_product_qty']"/>)
+                    </t>
+                </li>
+
+                <!-- it is there in default odoo: check if needed -->
+                <!-- <table t-if="line.get_prescription_order().details" class="prescription-order-info ms-2">
+                    <tr t-foreach="line.get_prescription_order()?.details" t-as="soLine" t-key="soLine_index">
+                        <td class="text-truncate"><t t-esc="soLine.product_uom_qty"/>x</td>
+                        <td class="text-truncate" style="max-width: 275px;"
+                            t-esc="soLine.product_name" />
+                        <td class="text-truncate">: </td>
+                        <td class="text-truncate"><t t-esc="env.utils.formatCurrency(soLine.total)" /> (tax incl.)</td>
+                    </tr>
+                </table> -->
+            </t>
+        </xpath>
+    </t>
+
+</templates>

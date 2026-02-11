@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="group_sms_otp" model="res.groups">
+        <field name="name">Manage SMS OTP</field>
+    </record>
+
+</odoo>

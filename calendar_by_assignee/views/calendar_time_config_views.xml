@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Form View for Calendar Time Configuration -->
+    <record id="view_calendar_time_config_form" model="ir.ui.view">
+        <field name="name">calendar.time.config.form</field>
+        <field name="model">calendar.time.config</field>
+        <field name="arch" type="xml">
+            <form string="Calendar Time Configuration">
+                <header>
+                    <button name="action_set_default" type="object" string="Set as Default" class="btn-primary"/>
+                    <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Start Time">
+                            <field name="start_hour"/>
+                            <field name="start_minute"/>
+                        </group>
+                        <group string="End Time">
+                            <field name="end_hour"/>
+                            <field name="end_minute"/>
+                        </group>
+                    </group>
+                    <group>
+                        <div>
+                            <p class="text-muted">
+                                <i class="fa fa-info-circle"></i>
+                                This configuration controls the time range displayed in all calendar views (Day, Week, Month, Cabin Day, Cabin Week, Cabin Month).
+                                Time slots are displayed every 30 minutes within the specified range.
+                            </p>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View for Calendar Time Configuration -->
+    <record id="view_calendar_time_config_tree" model="ir.ui.view">
+        <field name="name">calendar.time.config.tree</field>
+        <field name="model">calendar.time.config</field>
+        <field name="arch" type="xml">
+            <list string="Calendar Time Configurations">
+                <field name="display_name"/>
+                <field name="start_hour"/>
+                <field name="start_minute"/>
+                <field name="end_hour"/>
+                <field name="end_minute"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action for Calendar Time Configuration -->
+    <record id="action_calendar_time_config" model="ir.actions.act_window">
+        <field name="name">Calendar Time Configuration</field>
+        <field name="res_model">calendar.time.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure the time range for calendar display
+            </p>
+            <p>
+                Set the start and end time for all calendar views.
+                Time slots will be displayed every 30 minutes within this range.
+                Only one configuration can be active at a time.
+            </p>
+        </field>
+    </record>
+
+</odoo>

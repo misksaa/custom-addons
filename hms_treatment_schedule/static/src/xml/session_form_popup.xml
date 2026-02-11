@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Session Form Popup Template -->
+    <t t-name="TreatmentSchedule.SessionFormPopup" owl="1">
+        <div class="o_session_popup_overlay" t-on-click.stop="onClose">
+            <div class="o_session_popup_container" t-on-click.stop="">
+                
+                <!-- Popup Header -->
+                <div class="o_session_popup_header">
+                    <h5 class="popup-title" t-esc="getTitle()"/>
+                    <button class="btn-close" t-on-click="onClose">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <!-- Popup Body -->
+                <div class="o_session_popup_body">
+                    
+                    <!-- Loading State -->
+                    <t t-if="state.loading">
+                        <div class="popup-loading">
+                            <div class="spinner-border spinner-border-sm" role="status"/>
+                            <span class="ms-2">Loading...</span>
+                        </div>
+                    </t>
+                    
+                    <t t-else="">
+                        <!-- Tabs for different sections -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#session-info" role="tab">
+                                    <i class="fa fa-info-circle me-1"/>
+                                    Session Info
+                                </a>
+                            </li>
+                            <t t-if="!isNewLine() and props.slotData?.weekNumber">
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#appointments" role="tab">
+                                        <i class="fa fa-calendar-check-o me-1"/>
+                                        Appointments
+                                        <t t-if="props.slotData?.appointmentsCount &gt; 0">
+                                            <span class="badge bg-primary ms-1" t-esc="props.slotData.appointmentsCount"/>
+                                        </t>
+                                    </a>
+                                </li>
+                            </t>
+                        </ul>
+
+                        <div class="tab-content mt-3">
+                            <!-- Session Info Tab -->
+                            <div class="tab-pane fade show active" id="session-info" role="tabpanel">
+                                <!-- New Line: Product Selection -->
+                                <t t-if="isNewLine()">
+                                    <div class="form-group">
+                                        <label class="form-label required">Session Type (Product)</label>
+                                        <div class="autocomplete-container">
+                                            <input type="text"
+                                                   class="form-control"
+                                                   t-att-class="{'is-invalid': state.errors.product}"
+                                                   t-att-value="state.productInput"
+                                                   t-on-input="onProductInputChange"
+                                                   t-on-blur="onProductInputBlur"
+                                                   placeholder="Search for a product..."/>
+
+                                            <!-- Product Suggestions -->
+                                            <t t-if="state.showProductSuggestions and state.filteredProducts.length &gt; 0">
+                                                <div class="autocomplete-suggestions">
+                                                    <t t-foreach="state.filteredProducts" t-as="product" t-key="product.id">
+                                                        <div class="suggestion-item"
+                                                             t-on-click="() =&gt; this.onProductSelect(product)">
+                                                            <i class="fa fa-cube me-2"/>
+                                                            <span t-esc="product.name"/>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+
+                                            <div class="invalid-feedback" t-if="state.errors.product">
+                                                <t t-esc="state.errors.product"/>
+                                            </div>
+                                        </div>
+
+                                        <!-- Selected Product Display -->
+                                        <t t-if="state.productId">
+                                            <div class="selected-product mt-2">
+                                                <span class="badge bg-success">
+                                                    <i class="fa fa-check me-1"/>
+                                                    Selected: <t t-esc="state.productName"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+
+                                <!-- Existing Line: Show Product Info -->
+                                <t t-if="!isNewLine()">
+                                    <div class="form-group">
+                                        <label class="form-label">Session Type</label>
+                                        <div class="readonly-value">
+                                            <i class="fa fa-cube me-2"/>
+                                            <span t-esc="props.slotData?.productName || 'Unknown'"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Week</label>
+                                        <div class="readonly-value">
+                                            <i class="fa fa-calendar-week me-2"/>
+                                            <span t-esc="props.slotData?.weekKey || 'Unknown'"/>
+                                        </div>
+                                    </div>
+                                </t>
+
+                                <!-- Week Data Fields (only for editing existing week) -->
+                                <t t-if="showWeekFields()">
+                                    <hr class="my-3"/>
+
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fa fa-calendar me-1"/>
+                                            Date
+                                        </label>
+                                        <input type="date"
+                                               class="form-control"
+                                               t-att-value="state.date"
+                                               t-on-change="onDateChange"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fa fa-hashtag me-1"/>
+                                            Session Number / Details
+                                        </label>
+                                        <input type="text"
+                                               class="form-control"
+                                               t-att-value="state.number"
+                                               t-on-input="onNumberChange"
+                                               placeholder="e.g., Session 1, Complete, etc."/>
+                                    </div>
+                                </t>
+
+                                <!-- Quick Date Buttons -->
+                                <t t-if="showWeekFields()">
+                                    <div class="quick-actions mt-3">
+                                        <label class="form-label">Quick Set Date:</label>
+                                        <div class="btn-group w-100">
+                                            <button class="btn btn-outline-secondary btn-sm"
+                                                    t-on-click="() =&gt; { this.state.date = getTodayDate(); }">
+                                                Today
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm"
+                                                    t-on-click="() =&gt; {
+                                                        const d = new Date();
+                                                        d.setDate(d.getDate() + 7);
+                                                        this.state.date = d.toISOString().split('T')[0];
+                                                    }">
+                                                +1 Week
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm"
+                                                    t-on-click="() =&gt; {
+                                                        const d = new Date();
+                                                        d.setDate(d.getDate() + 14);
+                                                        this.state.date = d.toISOString().split('T')[0];
+                                                    }">
+                                                +2 Weeks
+                                            </button>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Appointments Tab -->
+                            <t t-if="!isNewLine() and props.slotData?.weekNumber">
+                                <div class="tab-pane fade" id="appointments" role="tabpanel">
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-info-circle me-2"/>
+                                        Manage appointments for <strong t-esc="props.slotData?.productName"/> - <strong t-esc="props.slotData?.weekKey"/>
+                                    </div>
+
+                                    <!-- Current Appointments -->
+                                    <div class="current-appointments mb-4">
+                                        <h6 class="mb-2">
+                                            <i class="fa fa-calendar-check-o me-1"/>
+                                            Current Appointments
+                                            <span class="badge bg-primary ms-1" t-esc="props.slotData?.appointmentsCount || 0"/>
+                                        </h6>
+
+                                        <t t-if="props.slotData?.appointments &amp;&amp; props.slotData.appointments.length &gt; 0">
+                                            <div class="list-group">
+                                                <t t-foreach="props.slotData.appointments" t-as="appointment" t-key="appointment.id">
+                                                    <div class="list-group-item list-group-item-action">
+                                                        <div class="d-flex w-100 justify-content-between align-items-center">
+                                                            <div>
+                                                                <h6 class="mb-1" t-esc="appointment.name"/>
+                                                                <small class="text-muted">
+                                                                    <i class="fa fa-user me-1"/>
+                                                                    <span t-esc="appointment.patient_name"/>
+                                                                    <span class="mx-2">|</span>
+                                                                    <i class="fa fa-calendar me-1"/>
+                                                                    <span t-esc="formatDate(appointment.date)"/>
+                                                                    <span class="mx-2">|</span>
+                                                                    <i class="fa fa-user-md me-1"/>
+                                                                    <span t-esc="appointment.physician_name || 'No physician'"/>
+                                                                </small>
+                                                            </div>
+                                                            <span t-attf-class="badge #{appointment.state === 'confirmed' ? 'bg-success' : 'bg-warning'}">
+                                                                <t t-esc="appointment.state"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="alert alert-warning">
+                                                <i class="fa fa-exclamation-triangle me-2"/>
+                                                No appointments linked to this session yet.
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <!-- Add Appointments Section -->
+                                    <div class="add-appointments">
+                                        <h6 class="mb-2">
+                                            <i class="fa fa-plus-circle me-1"/>
+                                            Add Appointments
+                                        </h6>
+
+                                        <div class="appointment-search mb-3">
+                                            <label class="form-label">Search Appointments:</label>
+                                            <div class="input-group">
+                                                <input type="text"
+                                                       class="form-control"
+                                                       t-att-value="state.appointmentSearch"
+                                                       t-on-input="onAppointmentSearchChange"
+                                                       placeholder="Search by appointment name, patient, or physician..."/>
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-search"/>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Available Appointments -->
+                                        <t t-if="state.filteredAppointments &amp;&amp; state.filteredAppointments.length &gt; 0">
+                                            <div class="available-appointments">
+                                                <div class="list-group">
+                                                    <t t-foreach="state.filteredAppointments" t-as="appointment" t-key="appointment.id">
+                                                        <div class="list-group-item list-group-item-action"
+                                                             t-att-class="isAppointmentSelected(appointment.id) ? 'active' : ''"
+                                                             t-on-click="() =&gt; this.onAppointmentSelect(appointment.id)">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input"
+                                                                       type="checkbox"
+                                                                       t-att-checked="isAppointmentSelected(appointment.id)"
+                                                                       t-on-click.stop="() =&gt; this.onAppointmentSelect(appointment.id)"/>
+                                                                <label class="form-check-label w-100">
+                                                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                                                        <div>
+                                                                            <h6 class="mb-1" t-esc="appointment.name"/>
+                                                                            <small t-att-class="isAppointmentSelected(appointment.id) ? 'text-light' : 'text-muted'">
+                                                                                <i class="fa fa-user me-1"/>
+                                                                                <span t-esc="appointment.patient_name"/>
+                                                                                <span class="mx-2">|</span>
+                                                                                <i class="fa fa-calendar me-1"/>
+                                                                                <span t-esc="formatDate(appointment.date)"/>
+                                                                                <t t-if="appointment.time">
+                                                                                    <span class="mx-2">|</span>
+                                                                                    <i class="fa fa-clock-o me-1"/>
+                                                                                    <span t-esc="appointment.time"/>
+                                                                                </t>
+                                                                            </small>
+                                                                        </div>
+                                                                        <span t-attf-class="badge #{appointment.state === 'confirmed' ? 'bg-success' : 'bg-warning'}">
+                                                                            <t t-esc="appointment.state"/>
+                                                                        </span>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle me-2"/>
+                                                No available appointments found. Make sure appointments are created for this patient.
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Popup Footer -->
+                <div class="o_session_popup_footer">
+                    <div class="footer-left">
+                        <t t-if="!isNewLine() and props.slotData?.lineId">
+                            <button class="btn btn-danger btn-delete" t-on-click="onDelete">
+                                <i class="fa fa-trash me-1"/>
+                                Delete Line
+                            </button>
+                        </t>
+                    </div>
+                    <div class="footer-right">
+                        <button class="btn btn-secondary" t-on-click="onClose">
+                            <i class="fa fa-times me-1"/>
+                            Cancel
+                        </button>
+                        <button class="btn btn-primary" t-on-click="onSave" t-att-disabled="state.loading">
+                            <i class="fa fa-save me-1"/>
+                            <t t-if="isNewLine()">Add Session Type</t>
+                            <t t-else="">Save Changes</t>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

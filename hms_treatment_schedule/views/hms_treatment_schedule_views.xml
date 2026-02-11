@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sequence -->
+    <record id="seq_hms_treatment_schedule" model="ir.sequence">
+        <field name="name">HMS Treatment Schedule Sequence</field>
+        <field name="code">hms.treatment.schedule</field>
+        <field name="prefix">TS/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- List View -->
+    <record id="view_hms_treatment_schedule_list" model="ir.ui.view">
+        <field name="name">hms.treatment.schedule.list</field>
+        <field name="model">hms.treatment.schedule</field>
+        <field name="arch" type="xml">
+            <list string="Treatment Schedules" decoration-info="state == 'draft'" decoration-success="state == 'completed'" decoration-danger="state == 'cancelled'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="patient_id"/>
+                <field name="physician_id"/>
+                <field name="total_weeks" string="Weeks"/>
+                <field name="total_sessions"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-primary="state == 'in_progress'" decoration-success="state == 'completed'" decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_hms_treatment_schedule_form" model="ir.ui.view">
+        <field name="name">hms.treatment.schedule.form</field>
+        <field name="model">hms.treatment.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Treatment Schedule">
+                <header>
+                    <button name="action_set_in_progress" string="Start Treatment" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_set_completed" string="Mark Complete" type="object" class="btn-success" invisible="state != 'in_progress'"/>
+                    <button name="action_set_cancelled" string="Cancel" type="object" class="btn-danger" invisible="state in ('completed', 'cancelled')"/>
+                    <button name="action_set_draft" string="Reset to Draft" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,completed,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_treatment_schedule_view" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Open Schedule View</span>
+                            </div>
+                        </button>
+                        <button name="action_print_treatment_schedule" type="object" class="oe_stat_button" icon="fa-print">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Print Report</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="physician_id"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="total_weeks" string="Total Weeks"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" placeholder="Enter notes here..."/>
+                    </group>
+
+                    <notebook>
+                        <page string="Treatment Sessions" name="sessions">
+                            <field name="line_ids" nolabel="1">
+                                <list editable="bottom" default_order="sequence asc, id asc">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id" string="Session Type"/>
+
+                                    <field name="wk1_date"/>
+                                    <field name="wk1_number"/>
+
+                                    <field name="wk2_date"/>
+                                    <field name="wk2_number"/>
+
+                                    <field name="wk3_date"/>
+                                    <field name="wk3_number"/>
+
+                                    <field name="wk4_date"/>
+                                    <field name="wk4_number"/>
+
+                                    <field name="wk5_date"/>
+                                    <field name="wk5_number"/>
+
+                                    <field name="wk6_date"/>
+                                    <field name="wk6_number"/>
+
+                                    <field name="wk7_date"/>
+                                    <field name="wk7_number"/>
+
+                                    <field name="wk8_date"/>
+                                    <field name="wk8_number"/>
+
+                                    <field name="wk9_date"/>
+                                    <field name="wk9_number"/>
+
+                                    <field name="wk10_date"/>
+                                    <field name="wk10_number"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Special Instructions" name="instructions">
+                            <field name="special_instructions" placeholder="Write special instructions..."/>
+                        </page>
+                    </notebook>
+
+                </sheet>
+<!--                <div class="oe_chatter">-->
+<!--                    <field name="message_follower_ids"/>-->
+<!--                    <field name="message_ids"/>-->
+<!--                </div>-->
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Action -->
+    <record id="action_hms_treatment_schedule" model="ir.actions.act_window">
+        <field name="name">Treatment Schedules</field>
+        <field name="res_model">hms.treatment.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Treatment Schedule
+            </p>
+            <p>
+                Track patient treatment sessions across multiple weeks.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_hms_treatment_schedule_root"
+              name="Treatment Schedules"/>
+
+    <menuitem id="menu_hms_treatment_schedule"
+              name="Treatment Schedules"
+              parent="menu_hms_treatment_schedule_root"
+              action="action_hms_treatment_schedule"/>
+
+</odoo>

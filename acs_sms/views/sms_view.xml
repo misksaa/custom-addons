@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="acs_sms_form_view" model="ir.ui.view">
+        <field name="name">sms.sms.form</field>
+        <field name="model">sms.sms</field>
+        <field name="inherit_id" ref="sms.sms_tsms_view_form"/>
+        <field name="arch" type="xml">
+            <field name="mail_message_id" position="after">
+                <field name="acs_templateid"/>
+                <field name="acs_server_reply" invisible="not acs_server_reply"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

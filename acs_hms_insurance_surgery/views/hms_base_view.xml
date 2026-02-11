@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- <Laboratory> -->
+    <record id="hms_surgery_view" model="ir.ui.view">
+        <field name="name">hms.surgery.from</field>
+        <field name="model">hms.surgery</field>
+        <field name="inherit_id" ref="acs_hms_surgery.hms_surgery_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general']//field[@name='department_id']" position="after">
+                <field name="insurance_id" domain="[('patient_id','=', patient_id), ('allow_surgery_insurance', '=', True)]"/>
+                <field name="insurance_company_id"/>
+                <field name="claim_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hms_surgery_tree" model="ir.ui.view">
+        <field name="name">hms.surgery.tree</field>
+        <field name="model">hms.surgery</field>
+        <field name="inherit_id" ref="acs_hms_surgery.hms_surgery_tree"/>
+        <field name="arch" type="xml">
+            <field name='diseases_ids' position="after">
+                <field name="insurance_id" optional="hide"/>
+                <field name="insurance_company_id" optional="hide"/>
+                <field name="claim_id" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_acs_surgery_filter" model="ir.ui.view">
+        <field name="name">hms.surgery.search</field>
+        <field name="model">hms.surgery</field>
+        <field name="inherit_id" ref="acs_hms_surgery.view_acs_surgery_filter"/>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="is_insured" string="Insured" domain="[('insurance_id','!=',False)]"/>
+                <field name="insurance_id"/>
+                <group expand="0" string="Group By...">
+                    <filter string="Insurance Company" name="insurance_company_groupby" domain="[]" context="{'group_by':'insurance_company_id'}"/>
+                    <filter string="Insurance Policy" name="insurance_policy_groupby" domain="[]" context="{'group_by':'insurance_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+</odoo>

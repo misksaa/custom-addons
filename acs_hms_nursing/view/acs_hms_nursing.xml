@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ward_round_tree_view" model="ir.ui.view">
+        <field name="name">acs.nurse.ward.round.tree</field>
+            <field name="model">acs.nurse.ward.round</field>
+            <field name="arch" type="xml">
+            <list string="Tree" decoration-danger="warning==True">
+                <field name="name"/>
+                <field name="nurse_id"/>
+                <field name="patient_id"/>   
+                <field name="date"/>
+                <field name="state" decoration-info="state=='draft'" decoration-success="state=='done'" widget="badge"/>
+                <field name="warning" invisible="1"/>
+             </list>
+        </field>
+    </record>
+
+    <record id="ward_round_form_view" model="ir.ui.view">
+        <field name="name">acs.nurse.ward.round.from</field>
+        <field name="model">acs.nurse.ward.round</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_done" invisible="state!='draft'" string="Done" type="object" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"done":"red"}'/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>        
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="hospitalization_id" readonly="state!='draft'"/>
+                            <field name="patient_id" readonly="state!='draft'"/>
+                            <field name="nurse_id" domain="[('department_id.department_type','=','nurse')]" readonly="state!='draft'"/>
+                        </group>
+                        <group>
+                            <label string="Evaluation" for="evaluation_id"/>
+                            <div name="evaluation_id">
+                                <div class="oe_inline" style="display: inline;" >
+                                    <field name="evaluation_id" class="oe_inline" readonly="state!='draft'"/>
+                                    <button name="action_create_evaluation" type="object" string="Create Evaluation" class=" oe_link oe_inline" invisible="state=='done' or evaluation_id"/>
+                                </div>
+                            </div>
+                            <field name="date" readonly="state!='draft'"/>
+                        </group>    
+                    </group>
+                    <notebook> 
+                        <page name="general_info" string="General Information">
+                            <div>NOTE: Details are shown based on Patient Evaluation</div>
+                            <group>
+                                <group>
+                                    <field name="weight" readonly="state!='draft'"/>
+                                    <field name="height" readonly="state!='draft'"/>
+                                    <field name="temp" readonly="state!='draft'"/>
+                                    <field name="hr" readonly="state!='draft'"/>
+                                </group>
+                                <group>
+                                    <field name="rr" readonly="state!='draft'"/>
+                                    <label string="Systolic/Diastolic BP" for="systolic_bp" readonly="state!='draft'"/>
+                                    <div name="systolic_bp">
+                                        <div class="oe_inline" style="display: inline;" >
+                                            <field name="systolic_bp" class="oe_inline" readonly="state!='draft'"/>/<field name="diastolic_bp" class="oe_inline" readonly="state!='draft'"/>
+                                        </div>
+                                    </div>
+                                    <field name="spo2" readonly="state!='draft'"/>
+                                </group>
+                                <group>
+                                    <field name="bmi" readonly="state!='draft'"/>
+                                </group>
+                                <group>
+                                    <field name="bmi_state" readonly="state!='draft'"/>
+                                </group>
+                            </group>
+
+                            <group>
+                                <group>
+                                    <field name="depression" readonly="state!='draft'"/>
+                                    <field name="personal_needs" readonly="state!='draft'"/>
+                                    <field name="pain" readonly="state!='draft'"/>
+                                    <field name="pain_level" readonly="state!='draft'"/>
+                                    <field name="position" readonly="state!='draft'"/>
+                                    <field name="potty" readonly="state!='draft'"/>
+                                    <field name="proximity" readonly="state!='draft'"/>
+                                </group>
+                                <group>
+                                    <field name="pump" readonly="state!='draft'"/>
+                                    <field name="urinary_catheter" readonly="state!='draft'"/>
+                                    <field name="glycemia" readonly="state!='draft'"/>
+                                    <field name="diuresis" readonly="state!='draft'"/>
+                                    <field name="evolution" readonly="state!='draft'"/>
+                                    <field name="warning" readonly="state!='draft'"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="round_summary" readonly="state!='draft'"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="ward_round_pivot_view" model="ir.ui.view">
+        <field name="name">acs.nurse.ward.round.pivot</field>
+        <field name="model">acs.nurse.ward.round</field>
+        <field name="arch" type="xml">
+            <pivot string="Ward Rounds">
+                <field name="nurse_id" type="measure"/>
+                <field name="patient_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="ward_round_search_view" model="ir.ui.view">
+        <field name="name">acs.nurse.ward.round.search</field>
+        <field name="model">acs.nurse.ward.round</field>
+        <field name="arch" type="xml">
+            <search string="ACS Ward Rounds">
+                <field name="nurse_id"/>
+                <field name="patient_id"/>
+                <field name="hospitalization_id"/>
+                <field name="name"/>
+                <newline/>
+                <group expand="0" string="Group By...">
+                    <filter string="Nurse Id" name="nurse_id" domain="[]" context="{'group_by':'nurse_id'}"/>
+                    <filter string="Patient Id" name="patient_id" domain="[]" context="{'group_by':'patient_id'}"/> 
+                    <filter string="Hospitalization" name="hospitalization_id" domain="[]" context="{'group_by':'hospitalization_id'}"/>
+                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="hms_ward_round_action" model="ir.actions.act_window">
+        <field name="name">Ward Rounds</field>
+        <field name="res_model">acs.nurse.ward.round</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create the first cash rounding</p>
+        </field>
+    </record>
+
+</odoo>

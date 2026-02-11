@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="acs_hms_pharmacy_pos.PrescriptionOrderList">
+        <div class="orders overflow-y-auto">
+            <div class="header-row d-flex text-bg-700 fw-bolder" t-att-class="{ 'd-none': ui.isSmall }">
+                <div class="col name p-2">Order</div>
+                <div class="col date p-2">Date</div>
+                <div class="col customer p-2">Patient</div>
+                <div class="col prescriptionsman p-2">Prescribing Doctor</div>
+                <div class="col total p-2">Total</div>
+                <div class="col state p-2">State</div>
+                <div class="col posordercount p-2">POS Orders</div>
+            </div>
+            <div class="order-list">
+                <t t-foreach="props.orders" t-as="order" t-key="order.id">
+                    <PrescriptionOrderRow
+                        onClickPrescriptionOrder.bind="props.onClickPrescriptionOrder"
+                        order="order"
+                        highlightedOrder="highlightedOrder"/>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

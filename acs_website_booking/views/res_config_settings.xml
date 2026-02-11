@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.form.schedule</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="10"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='invite_users']" position="after">    
+                <block title="Service Schedules Booking" name="schedules_booking_setting_container">
+                    <setting help="No of days for which advance booking is allowed" id="acs_allowed_booking_online_days_setting">
+                        <field name="acs_allowed_booking_online_days" class="o_light_label" string="Allowed Advance Booking Days"/>
+                    </setting>
+                    <setting help="Configure your slot length, 15 or 30 min" id="acs_booking_slot_time_setting">
+                        <field name="acs_booking_slot_time" class="o_light_label" string="Minutes in each slot"/>
+                    </setting>
+                    <setting help="No of allowed booking per slot, Once slot is fully booked will not be shown to users." id="acs_allowed_booking_per_slot_setting">
+                        <field name="acs_allowed_booking_per_slot" class="o_light_label" string="Allowed Booking per Slot"/>
+                    </setting>
+                    <setting help="Allow users to pay online for their appointments." id="acs_allowed_booking_payment_setting">
+                        <field name="acs_allowed_booking_payment" class="o_light_label" string="Online Payment"/>
+                    </setting>
+                    <setting help="Define the product used for booking" id="booking_product_id_setting">
+                        <field name="booking_product_id" class="o_light_label" string="Booking Product"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

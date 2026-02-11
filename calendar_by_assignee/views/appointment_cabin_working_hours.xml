@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="appointment_cabin_form_inherit_working_hours" model="ir.ui.view">
+        <field name="name">appointment.cabin.form.inherit.working.hours</field>
+        <field name="model">appointment.cabin</field>
+        <field name="inherit_id" ref="acs_hms.view_appointment_cabin_form_form"/>
+
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="Working Hours">
+                        <field name="cabin_working_hour_ids">
+                            <list editable="bottom">
+                                <field name="line_name"/>
+                                <field name="day_code"/>
+                                <field name="day_slot"/>
+                                <field name="is_break"/>
+                                <field name="time_from" widget="float_time"/>
+                                <field name="time_to" widget="float_time"/>
+                                <field name="duration_hours" widget="float_time" readonly="1"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

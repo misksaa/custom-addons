@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hms_appointment_form" model="ir.ui.view"> 
+        <field name="name">hms.appointment.form</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_form"/>
+        <field name="arch" type="xml">
+
+            <page name="clinical_ass" position="after">
+                <page name="vital_signs" string="Vital Signs &amp; Symptoms" groups="acs_hms_vital_examination.group_hms_vital_examination">
+                    <notebook>
+                        <page name="head_and_neck" string="Head and Neck">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_headaches" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_migraine" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_neck_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_limited_neck_movements" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_head_trauma" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dizziness" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_drowsiness" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_headedness" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_enlarged_cervical_ln" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_painful_cervical_ln" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="ent" string="ENT">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_earache" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_tinnitus" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_low_hearing_equity" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_clogged_ears" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_lot_of_ear_wax" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_runny_nose" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_blocked_nose" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_stuffy_nose" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_epistaxis" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_sneezing" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_sore_throat" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_itching_dry_throat" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_swallowing_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_pharyngitis" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_tonsillitis" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_rhinitis" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_sinusitis" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_ear_drum_redness" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_painful_ear_auricle" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_swollen_ear_lobule" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_ear_rash" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_post_nasal_drip" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_vertigo" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_hearing_loss" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="eye" string="Eye">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_eye_redness" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_conjunctivitis" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_red_eye_lid" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_swollen_eye_lid" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_eye_lid_pimple" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_squint" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_low_visual_equity" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_lacrimation" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dry_eye" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_itching_eye" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_painful_eye" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_eye_secretions" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_swollen_eye" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_eye_skin_color_change" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="chest_heart" string="Chest &amp; Heart">
+                            <group col="3">
+                                <group>
+                                   <!--  <field name="vs_chest_pain" readonly="state in ['done','cancel']"/> -->
+                                    <field name="vs_chest_tightness" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_chest_compression" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_shortness_of_breath" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dyspnea" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dry_cough" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_wet_cough" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_yellow_green_phlegm" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_hemoptysis" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_wheezy_chest" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_chest_crepitation" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_chest_crackles" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_chest_deformity" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_palpitations" string="Palpitations" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_heart_murmurs" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_orthopnea" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_cardio_thoracic_scar" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="git" string="GIT">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_abdominal_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_epigastric_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_heartburn" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_gastric_regurgitation" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_right_upper_quadrant_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_left_upper_quadrant_pain" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_right_lower_quadrant_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_left_lower_quadrant_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_para_umbilical_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_distention" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_nausea" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_vomiting" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_diarrhea" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_constipation" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_abdominal_gases" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_abdominal_scar" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_blood_in_stool" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="surgery" string="Surgery">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_hemorrhoids" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_anal_fissures" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_gluteal_pimple" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_abscess" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_pimples" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_cut_wound" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_surgical_wound" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_bedsores" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_diabetic_foot" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_varicose_veins" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_cesarean_section" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_furuncles" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="urinary_gynecology" string="Urinary &amp; Gynecology">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_renal_colic" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_loin_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dysuria" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_frequency" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_urgency" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_lower_middle_abdominal_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dark_urine" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_cutting_urination" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_bloody_urine" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_dysmenorrhea" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_hemorrhagia" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_missed_pills" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_irregular_menstruation" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="orthopedic_neuro" string="Orthopedic &amp; Neuro">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_fatigue" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_general_weakness" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_low_energy" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_general_body_aches" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_muscle_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_low_back_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_upper_back_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_shoulder_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_lower_limb_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_hip_joint_pain" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_knee_joint_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_elbow_joint_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_ankle_joint_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_ankle_twist" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_joint_swelling" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_foot_oedema" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_lowe_limb_oedema" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_numbness" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_tingling" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_paresthesia" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_neuropathic_pain" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_weak_reflexes" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_limitation_of_movements" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_psychic_trauma" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_general_anxiety" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_hemiplegia" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_paraplegia" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_quadriplegia" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_depression_red_flag" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_autistic_red_flag" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="mouth" string="Mouth">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_mouth_sores" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_tongue_sores" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_oral_blisters" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_white_colored_tongue" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_strawberry_tongue" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_geographic_tongue" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_oral_white_patches" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_teething" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dental_pain" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_toothache" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dental_cares" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_oral_bad_odor" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_mouth_angles_fissures" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="skin" string="Skin">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_skin_rash" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_blisters" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_red_patches" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_dry_skin" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_fissured_skin" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_redness" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_itching" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_burns" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_scars" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_hair_loss" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_hair_cracking" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_nails_cracking" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_nails_fungal_infection" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_over_sweating" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_skin_crackles" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_lips_fissures" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_swollen_lips" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="miscellaneous" string="Miscellaneous">
+                            <group col="3">
+                                <group>
+                                    <field name="vs_general_checkup" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_new_born_baby_checkup" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_preschool_checkup" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_laboratory_checkup" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_teleconsultation" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_second_opinion_consultation" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_referral_request" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="vs_sick_leave_request" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_medical_certificate_request" readonly="state in ['done','cancel']"/>
+                                    <field name="vs_medical_advice_request" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="mental_status" string="Mental Status">
+                            <group string="Glasgow Coma Scale">
+                                <group>
+                                    <field name="loc" readonly="state in ['done','cancel']"/>
+                                    <field name="loc_verbal" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="loc_eyes" readonly="state in ['done','cancel']"/>
+                                    <field name="loc_motor" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                            <group string="Mental Assessment and Impairments">
+                                <group>
+                                    <field name="mood" readonly="state in ['done','cancel']"/>
+                                    <field name="orientation" readonly="state in ['done','cancel']"/>
+                                    <field name="knowledge_current_events" readonly="state in ['done','cancel']"/>
+                                    <field name="abstraction" readonly="state in ['done','cancel']"/>
+                                    <field name="calculation_ability" readonly="state in ['done','cancel']"/>
+                                    <field name="praxis" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="violent" readonly="state in ['done','cancel']"/>
+                                    <field name="memory" readonly="state in ['done','cancel']"/>
+                                    <field name="judgment" readonly="state in ['done','cancel']"/>
+                                    <field name="vocabulary" readonly="state in ['done','cancel']"/>
+                                    <field name="object_recognition" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </page>
+
+                <page string="Physical Examination" groups="acs_hms_vital_examination.group_hms_vital_examination" invisible="state=='draft'">
+                    <group string="Head and Neck">
+                        <group string="Head">
+                            <field name="pe_head_sign_symptoms_of_infection" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_head_symmetry" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Eyes">
+                            <field name="pe_eyes_equal" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_eyes_rlarge" invisible="pe_eyes_equal!='yes'" readonly="state in ['done','cancel']"/>
+                            <field name="pe_eyes_llarge" invisible="pe_eyes_equal!='yes'" readonly="state in ['done','cancel']"/>
+
+                            <field name="pe_eyes_reactive_to_light" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_eyes_round" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_eyes_rabnormal" invisible="pe_eyes_round!='yes'" readonly="state in ['done','cancel']"/>
+                            <field name="pe_eyes_labnormal" invisible="pe_eyes_round!='yes'" readonly="state in ['done','cancel']"/>
+
+                            <field name="pe_eyes_reaction" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_eyes_rnoreaction" invisible="pe_eyes_reaction=='na'" readonly="state in ['done','cancel']"/>
+                            <field name="pe_eyes_lnoreaction" invisible="pe_eyes_reaction=='na'" readonly="state in ['done','cancel']"/>
+
+                            <field name="pe_eyes_accomodation" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+
+                        <group string="Ears">
+                            <field name="pe_ears_symmetry" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_ears_lesion" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_ears_lesion_comment" invisible="pe_ears_lesion=='na'" readonly="state in ['done','cancel']"/>
+                            <field name="pe_ears_gross_hearing" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+
+                        <group string="Nose">
+                            <field name="pe_nose_congestion" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nose_drainage" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nose_drainage_comment" invisible="pe_nose_drainage=='na'" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nose_smell" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+
+                        <group string="Mouth/Throat">
+                            <field name="pe_mouth_visual" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_mouth_lesion" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_mouth_lesion_comment" invisible="pe_mouth_lesion=='na'" readonly="state in ['done','cancel']"/>
+                            <field name="pe_mouth_missing_teeth" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nose_odor" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nose_swallow" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nose_tracheal_alignment" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nose_lymp_nodes" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+
+                        <group string="Skin">
+                            <field name="pe_skin_color" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_skin_temperature" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_skin_lesions" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_skin_lesions_comment" invisible="pe_skin_lesions=='na'" readonly="state in ['done','cancel']"/>
+                        </group>
+
+                        <group string="Neck">
+                            <field name="pe_neck_veins" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_neck_visual" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_neck_palpitation" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                    </group>
+
+                    <group string="Chest">
+                        <group>
+                            <field name="pe_chest_movements" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_chest_auscultation" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_chest_breathing_sounds" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                    </group>
+
+                    <group string="CARDIOVASCULAR">
+                        <group string="Skin/Mucous Membrane" colspan="4">
+                            <field name="pe_cardio_membrane" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Pulse">
+                            <field name="pe_pulse_radial" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_pulse_pedal" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_pulse_apical_radial" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_pulse_carotid" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Capillary Refill">
+                            <field name="pe_capillary_refill" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Jugular Vein">
+                            <field name="pe_jugular_vein_visual" string="Visual" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Edema">
+                            <field name="pe_edema_present" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Hearth Rythmn">
+                            <field name="pe_hr_auscultation" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Device">
+                            <field name="pe_device_pacemaker" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_device_pacemaker_comment" invisible="pe_device_pacemaker=='na'" readonly="state in ['done','cancel']"/>
+                        </group>
+                    </group>
+
+                    <group string="GIT">
+                        <group string="Abdomen">
+                            <field name="pe_git_shape" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="4-Quadrant">
+                            <field name="pe_git_luq" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="(Auscultation)">
+                            <field name="pe_git_ruq" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_git_llq" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_git_rlq" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Umbilicus">
+                            <field name="pe_git_visual" string="Visual" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Anus">
+                            <field name="pe_git_palpitation" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Bowel">
+                            <field name="pe_git_movements" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                    </group>
+
+                    <group string="NEUROLOGICAL">
+                        <group string="LOC" colspan="4">
+                            <field name="pe_nuerological_alertness" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                            <field name="pe_nuerological_orientation_level" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Cranial Nerve">
+                            <field name="pe_nuerological_sensory" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                        <group string="Pain level">
+                            <field name="pe_nuerological_pain_level" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        </group>
+                    </group>
+
+                    <group string="GENITO URINARY">
+                        <field name="pe_urinary_symptomps" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_urinary_symptomps_comment" invisible="pe_urinary_symptomps=='na'" readonly="state in ['done','cancel']"/>
+                        <field name="pe_urinary_discharge" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_urinary_discharge_comment" invisible="pe_urinary_discharge=='na'" readonly="state in ['done','cancel']"/>
+                        <field name="pe_urinary_genitalia_male" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_urinary_genitalia_female" string="Genitalia Female" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                    </group>
+
+                    <group string="EXTREMITIES">
+                        <field name="pe_extremities_arms" string="Genitalia Female" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_extremities_palmar_creases" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_extremities_fingers" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_extremities_hips" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_extremities_legs" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_extremities_feet_position" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_extremities_toes" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                        <field name="pe_extremities_back" widget="radio" options="{'horizontal': true}" readonly="state in ['done','cancel']"/>
+                    </group>
+                </page>
+            </page>
+
+        </field>
+    </record>
+
+</odoo>

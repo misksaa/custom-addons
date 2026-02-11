@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- acs schedule -->
+    <record id="acs_schedule_form" model="ir.ui.view">
+        <field name="name">acs.schedule.form</field>
+        <field name="model">acs.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Schedule">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="booking_tz"/>
+                            <field name="show_fee_on_booking"/>
+                            <field name="price"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                            <field name="user_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                            <field name="schedule_type"/>
+                            <field name="active" invisible="1"/>
+                            <field name="acs_own_schedule" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <div style="background-color:greenyellow;padding:20px;" colspan="2">
+                            <!-- Please Enter Hour in respect to UTC timezone. e.g:<br/>
+                        If your timezone is UTC+1 and you want ot set starting time 08:00 You should enter 7:00 <br/> -->
+                        <b>NOTE:</b> Make sure server timezone is UTC. Time in below table is also UTC Hours.
+                        </div>
+                    </group>
+                    <field name="schedule_lines_ids"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_acs_schedule_tree" model="ir.ui.view">
+        <field name="name">acs.schedule.tree</field>
+        <field name="model">acs.schedule</field>
+        <field name="arch" type="xml">
+            <list string="Schedule">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="acs_schedule_slot_search" model="ir.ui.view">
+        <field name="name">acs.schedule.search</field>
+        <field name="model">acs.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Schedule">
+                <newline/>
+                <filter string="My Schedule" name="my_schedule" domain="[('user_ids', 'in', [uid])]" help="Schedules related to user"/>
+                <group expand="0" string="Group By...">
+                    <filter string="Assignees" name="user_groupby" domain="[]" context="{'group_by':'user_ids'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_acs_schedule_form" model="ir.actions.act_window">
+        <field name="name">Schedules</field>
+        <field name="res_model">acs.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Records Found.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_my_schedules" model="ir.actions.act_window">
+        <field name="name">My Schedules</field>
+        <field name="res_model">acs.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('acs_own_schedule','=',True),('user_ids', 'in', [uid])]</field>
+        <field name="context">{'acs_own_scheduling':1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Records Found.
+            </p>
+        </field>
+    </record>
+
+    <!-- acs schedule Lines -->
+    <record id="view_acs_schedule_lines_tree" model="ir.ui.view">
+        <field name="name">acs.schedule.lines.tree</field>
+        <field name="model">acs.schedule.lines</field>
+        <field name="arch" type="xml">
+            <list string="Schedule Lines">
+                <field name="name"/>
+                <field name="dayofweek"/>
+                <field name="hour_from" widget="float_time"/>
+                <field name="hour_to" widget="float_time"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_acs_schedule_lines_form" model="ir.ui.view">
+        <field name="name">acs.schedule.lines.form</field>
+        <field name="model">acs.schedule.lines</field>
+        <field name="arch" type="xml">
+            <form string="Schedule Lines">
+                <group>
+                    <field name="name"/>
+                    <field name="dayofweek"/>
+                    <label for="hour_from" string="Hours"/>
+                    <div>
+                        <field name="hour_from" widget="float_time" class="oe_inline"/>
+                        -
+                        <field name="hour_to" widget="float_time" class="oe_inline"/>
+                    </div>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- acs schedule Slot -->
+    <record id="view_acs_schedule_slot_form" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.form</field>
+        <field name="model">acs.schedule.slot</field>
+        <field name="arch" type="xml">
+            <form string="Schedule Slot">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="slot_date"/>
+                            <field name="booking_tz"/>
+                        </group>
+                        <group>
+                            <field name="acs_schedule_id"/>
+                        </group>
+                    </group>
+                    <group string="Slot Lines">
+                        <field name="slot_ids" nolabel="1" colspan="2">
+                            <list string="Schedule Slot" editable="bottom">
+                                <field name="name"/>
+                                <field name="from_slot" required="1"/>
+                                <field name="to_slot" required="1"/>
+                                <field name="limit"/>
+                                <field name="rem_limit"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_acs_schedule_slot_tree" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.tree</field>
+        <field name="model">acs.schedule.slot</field>
+        <field name="arch" type="xml">
+            <list string="Schedule Slot">
+                <field name="slot_date"/>
+                <field name="acs_schedule_id"/>
+                <field name="slot_ids"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_acs_schedule_slot" model="ir.actions.act_window">
+        <field name="name">Schedule Slot</field>
+        <field name="res_model">acs.schedule.slot</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Records Found.
+            </p>
+        </field>
+    </record>
+
+    <!-- acs schedule Slot Lines Form -->
+    <record id="view_acs_schedule_slot_lines_form" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.form</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="arch" type="xml">
+            <form string="Slots" create="false" edit="false">
+                <header>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="from_slot" readonly="1"/>
+                        <field name="to_slot" readonly="1"/>
+                        <field name="limit" readonly="1"/>
+                        <field name="rem_limit"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_acs_schedule_slot_lines_tree" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.lines.tree</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="arch" type="xml">
+            <list string="Booking Slots">
+                <field name="from_slot"/>
+                <field name="to_slot"/>
+                <field name="limit"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="acs_my_schedule_slot_lines_search" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.lines.search</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="arch" type="xml">
+            <search string="acs Slots">
+                <newline/>
+                <filter string="My Slots" name="my_slots" domain="[('user_id', '=', uid)]" help="Slots related to physician"/>
+                <group expand="0" string="Group By...">
+                    <filter string="Users" name="user_groupby" domain="[]" context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="acs_schedule_slot_lines_calendar" model="ir.ui.view">
+        <field name="name">acs.schedule.slot.lines.calendar</field>
+        <field name="model">acs.schedule.slot.lines</field>
+        <field name="type">calendar</field>
+        <field name="arch" type="xml">
+            <calendar string="Slots" color="limit" date_start="from_slot" quick_create="0" date_stop="to_slot" mode="week" create="false" delete="false" event_open_popup="true">
+                <field name="user_id" avatar_field="avatar_128" widget="many2one_avatar_resource"/>
+                <field name="limit"/>
+                <field name="rem_limit"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_acs_schedule_slot_lines" model="ir.actions.act_window">
+        <field name="name">Booking Slots</field>
+        <field name="res_model">acs.schedule.slot.lines</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Records Found.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_my_acs_schedule_slot_lines" model="ir.actions.act_window">
+        <field name="name">My Slots</field>
+        <field name="res_model">acs.schedule.slot.lines</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'acs_own_scheduling':1}</field>
+        <field name="search_view_id" ref="acs_my_schedule_slot_lines_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Records Found.
+            </p>
+        </field>
+    </record>
+
+</odoo>

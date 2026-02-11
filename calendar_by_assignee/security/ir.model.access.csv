@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cabin_working_hour_user,Cabin Working Hours,model_appointment_cabin_working_hour,base.group_user,1,1,1,1
+access_calendar_time_config,calendar.time.config,model_calendar_time_config,base.group_user,1,1,1,1
+

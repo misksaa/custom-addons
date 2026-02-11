@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_acs_hms_contract_user,access_acs_hms_contract_user,acs_subscription.model_acs_contract,acs_hms_base.group_hms_user,1,0,0,0
+access_acs_hms_contract_manager,access_acs_hms_contract_manager,acs_subscription.model_acs_contract,acs_hms_base.group_hms_manager,1,1,1,1
+access_acs_hms_subscription_user,access_acs_hms_subscription_user,acs_subscription.model_acs_subscription,acs_hms_base.group_hms_user,1,0,0,0
+access_acs_hms_subscription_manager,access_acs_hms_subscription_manager,acs_subscription.model_acs_subscription,acs_hms_base.group_hms_manager,1,1,1,1

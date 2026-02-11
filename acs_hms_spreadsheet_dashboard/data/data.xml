@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="spreadsheet_dashboard_group_acs_hms" model="spreadsheet.dashboard.group">
+        <field name="name">HMS</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="acs_dashboard_appointment" model="spreadsheet.dashboard">
+        <field name="name">Appointment</field>
+        <field name="spreadsheet_binary_data" type="base64" file="acs_hms_spreadsheet_dashboard/data/files/acs_hms_appointment_dashboard.json"/>
+        <field name="dashboard_group_id" ref="acs_hms_spreadsheet_dashboard.spreadsheet_dashboard_group_acs_hms"/>
+        <field name="group_ids" eval="[Command.link(ref('acs_hms.group_hms_receptionist'))]"/>
+        <field name="sequence">10</field>
+    </record>
+ 
+    <!-- <record id="acs_dashboard_treatment" model="spreadsheet.dashboard">
+        <field name="name">Treatment</field>
+        <field name="data" type="base64" file="acs_hms_spreadsheet_dashboard/data/files/acs_hms_treatment_dashboard.json"/>
+        <field name="dashboard_group_id" ref="acs_hms_spreadsheet_dashboard.spreadsheet_dashboard_group_acs_hms"/>
+        <field name="group_ids" eval="[Command.link(ref('acs_hms.group_hms_receptionist'))]"/>
+        <field name="sequence">20</field>
+    </record> -->
+
+</odoo>

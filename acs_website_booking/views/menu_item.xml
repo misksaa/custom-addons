@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    
+    <!-- Booking -->
+    <menuitem id="menu_acs_schedule" name="Booking" sequence="40" web_icon="acs_website_booking,static/description/calendar.png" groups="base.group_user"/>
+
+    <!-- My schedules -->
+    <menuitem id="main_menu_my_acs_schedules" name="My Schedules" parent="acs_website_booking.menu_acs_schedule" sequence="10"/>
+
+    <menuitem id="menu_my_acs_schedules" name="My Schedules" parent="main_menu_my_acs_schedules" action="action_my_schedules" sequence="10"/>
+    <menuitem id="menu_my_schedules_slots" name="My Slots" parent="main_menu_my_acs_schedules" action="action_my_acs_schedule_slot_lines" sequence="20"/>
+    <menuitem id="menu_create_my_acs_slots" name="Create Own Slots" parent="main_menu_my_acs_schedules" action="acs_own_scheduler_wizard_action" sequence="30"/>
+
+    <!-- All schedules -->
+    <menuitem id="main_menu_all_acs_schedules" name="All Schedules" parent="acs_website_booking.menu_acs_schedule" sequence="20"/>
+
+    <menuitem id="menu_all_acs_schedules" name="All Schedules" parent="main_menu_all_acs_schedules" action="action_acs_schedule_form" sequence="10"/>
+    
+    <menuitem id="menu_acs_schedule_slot" name="Booking Slots" sequence="20" parent="main_menu_all_acs_schedules" action="action_acs_schedule_slot"/>
+    <!-- <menuitem id="menu_acs_schedule_slot_lines" name="All Slots" parent="main_menu_all_acs_schedules" sequence="20" action="action_acs_schedule_slot_lines"/> -->
+
+    <menuitem id="acs_menu_scheduler_wizard_slot" name="Create Slots" sequence="30" parent="main_menu_all_acs_schedules" action="acs_scheduler_wizard_action"/>
+
+</odoo>

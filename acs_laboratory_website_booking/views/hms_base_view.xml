@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="hms_test_view" model="ir.ui.view">
+        <field name="name">acs.lab.test.form</field>
+        <field name="model">acs.lab.test</field>
+        <field name="inherit_id" ref="acs_laboratory.hms_test_view"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//group" position="before">
+                <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_1920'}"/>
+            </xpath>
+            <field name="result_value_type" position="after">
+                <field name="allowed_online_booking"/>
+            </field>
+        </field>
+    </record>
+
+	<!-- schedule -->
+    <record id="appointment_schedule_form" model="ir.ui.view">
+        <field name="name">acs.schedule.form</field>
+        <field name="model">acs.schedule</field>
+        <field name="inherit_id" ref="acs_website_booking.acs_schedule_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="collection_center_id" invisible="schedule_type!='laboratory'" required="schedule_type=='laboratory'"/>
+            </field>
+        </field>
+    </record>
+ 
+    <record id="patient_laboratory_test_request_form" model="ir.ui.view">
+        <field name="name">acs.laboratory.request.form</field>
+        <field name="model">acs.laboratory.request</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_request_form"/>
+        <field name="arch" type="xml">
+            <field name="date" position="attributes">
+                <attribute name="force_save">True</attribute>
+            </field>
+            <page name="other_info" position="inside">
+                <group>
+                    <group>
+                        <field name='patient_count' readonly="state!='draft'"/>
+                    </group>
+                </group>
+            </page>
+            <field name="is_group_request" position="after">
+                <field name='collection_center_id' invisible="1"/>
+                <field name='booked_online' readonly="state!='draft'"/>
+                <label for="schedule_date" string="Schedule Date"/>
+                <div class="o_row">
+                    <field name="schedule_date"  nolabel="1" class="oe_inline" readonly="state!='draft'"/>
+                    <field name='schedule_slot_id' nolabel="1" class="oe_inline" domain=" [('acs_slot_id.slot_date','=',schedule_date),('acs_slot_id.acs_schedule_id.collection_center_id','=',collection_center_id)]" options="{'no_create': True}" readonly="state!='draft'"/>
+                </div>
+            </field>
+        </field>
+    </record>
+
+</odoo>

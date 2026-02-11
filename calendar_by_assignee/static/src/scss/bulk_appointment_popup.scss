@@ -1,0 +1,419 @@
+/** @odoo-module **/
+
+// توسيع البوب اب قليلاً
+.bulk-appointment-popup.o_appointment_form_popup {
+    max-width: 600px !important;
+    max-height: 85vh !important;
+
+    .popup-content {
+        padding: 20px !important;
+    }
+
+    .form-fields {
+        max-width: 600px !important;
+    }
+}
+
+.selected-session-types-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+
+    .session-type-block {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+        .session-type-header {
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+
+            h6 {
+                font-size: 1.1em;
+                font-weight: 600;
+            }
+        }
+
+        .weeks-grid {
+            margin-top: 15px;
+
+            .week-section {
+                background: #f8f9fa;
+                border-radius: 6px;
+                padding: 15px;
+                margin-bottom: 15px;
+
+                .week-header {
+                    background: white;
+                    padding: 10px 15px;
+                    border-radius: 5px;
+                    border: 1px solid #dee2e6;
+
+                    .badge {
+                        font-size: 0.9em;
+                        padding: 5px 10px;
+                    }
+
+                    input[type="number"] {
+                        height: 38px;
+                        text-align: center;
+                    }
+                }
+
+                .appointment-slots-container {
+                    margin-top: 15px;
+
+                    .appointment-slot-row {
+                        background: white;
+                        border: 1px solid #e9ecef;
+                        border-radius: 6px;
+                        padding: 15px;
+                        margin-bottom: 15px;
+
+                        .appointment-header {
+                            .badge {
+                                font-size: 0.85em;
+                                padding: 5px 10px;
+                                background: #f8f9fa;
+                                color: #495057;
+                                border: 1px solid #dee2e6;
+                            }
+                        }
+
+                        .appointment-fields {
+                            .form-group {
+                                margin-bottom: 15px;
+
+                                label {
+                                    font-weight: 600;
+                                    font-size: 0.95em;
+                                    margin-bottom: 8px;
+                                    display: block;
+                                }
+
+                                .form-control {
+                                    border: 2px solid #e9ecef;
+                                    border-radius: 6px;
+                                    padding: 10px 15px;
+                                    font-size: 0.95em;
+
+                                    &:focus {
+                                        border-color: #007bff;
+                                        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+                                    }
+
+                                    &.is-invalid {
+                                        border-color: #dc3545;
+
+                                        &:focus {
+                                            border-color: #dc3545;
+                                            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+                                        }
+                                    }
+
+                                    &.time-input-24h {
+                                        font-family: monospace;
+                                        letter-spacing: 1px;
+                                        text-transform: uppercase;
+                                        cursor: pointer;
+                                        background: white;
+                                    }
+                                }
+
+                                .invalid-feedback {
+                                    font-size: 0.85em;
+                                    margin-top: 5px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// تعديل الـ time dropdown لتلائم المساحة الأكبر
+.time-input-with-dropdown {
+    position: relative;
+
+    .time-input-24h {
+        padding-right: 40px !important;
+    }
+
+    .time-dropdown-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        z-index: 5;
+        pointer-events: auto;
+        transition: all 0.2s ease;
+
+        &:hover {
+            color: #007bff;
+        }
+    }
+
+    .custom-time-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        margin-top: 5px;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        max-height: 350px;
+        overflow: hidden;
+        animation: dropdownSlideIn 0.2s ease-out;
+
+        .dropdown-header {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .dropdown-content.columns-layout {
+            display: flex;
+            padding: 0;
+            height: 250px;
+
+            .time-column {
+                flex: 1;
+                padding: 15px;
+                border-right: 1px solid #e9ecef;
+                display: flex;
+                flex-direction: column;
+
+                &:last-child {
+                    border-right: none;
+                }
+
+                .section-title {
+                    font-size: 0.85em;
+                    font-weight: 600;
+                    color: #6c757d;
+                    margin-bottom: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    text-align: center;
+                    flex-shrink: 0;
+                }
+
+                .time-options-container {
+                    flex: 1;
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+
+                    &::-webkit-scrollbar {
+                        width: 6px;
+                    }
+
+                    &::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 3px;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background: #c1c1c1;
+                        border-radius: 3px;
+                    }
+
+                    &::-webkit-scrollbar-thumb:hover {
+                        background: #a8a8a8;
+                    }
+                }
+            }
+        }
+
+        .time-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+        }
+
+        .time-option {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+            background: white;
+            width: 100%;
+            box-sizing: border-box;
+
+            &:hover {
+                background: #e3f2fd;
+                border-color: #007bff;
+                color: #007bff;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+            }
+
+            &.selected {
+                background: #007bff;
+                color: white;
+                border-color: #007bff;
+                font-weight: 600;
+            }
+
+            &.hour-option, &.minute-option {
+                font-family: monospace;
+                letter-spacing: 0.5px;
+                font-size: 0.95em;
+            }
+        }
+    }
+}
+
+@keyframes dropdownSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// تعديلات للرسائل التنبيهية
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    border-color: #abdde5;
+    color: #0c5460;
+    font-weight: 500;
+}
+
+// تحسين العرض على الشاشات الصغيرة
+@media (max-width: 768px) {
+    .bulk-appointment-popup.o_appointment_form_popup {
+        width: 95% !important;
+        max-width: 95% !important;
+
+        .popup-content {
+            padding: 15px !important;
+        }
+
+        .form-fields {
+            max-width: 100% !important;
+            padding: 15px !important;
+        }
+
+        .appointment-fields {
+            .form-row {
+                flex-direction: column;
+
+                .form-group {
+                    width: 100% !important;
+                    margin-bottom: 15px;
+                }
+            }
+        }
+
+        .custom-time-dropdown {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%);
+            width: 90vw !important;
+            max-width: 320px !important;
+            max-height: 70vh !important;
+            z-index: 1100 !important;
+        }
+    }
+}
+
+.form-fields {
+    .form-group {
+        margin-bottom: 20px !important;
+    }
+
+    .form-row {
+        margin-bottom: 10px !important;
+    }
+}
+
+input[type="date"].form-control {
+    &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+.number-input-wrapper {
+    .number-minus, .number-plus {
+        transition: all 0.2s ease;
+        border: 2px solid #dee2e6;
+        background: white;
+
+        &:hover:not(:disabled) {
+            background: #007bff;
+            border-color: #007bff;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        &:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        i {
+            line-height: 1;
+        }
+    }
+
+    span {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #495057;
+        min-width: 40px;
+        text-align: center;
+    }
+}
+
+// تحسين العرض على الشاشات الصغيرة
+@media (max-width: 768px) {
+    .week-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+
+        .d-flex.align-items-center {
+            margin-bottom: 10px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        small.text-muted {
+            align-self: flex-end;
+        }
+    }
+}

@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="CalendarByAssignee.AppointmentFormPopup">
+        <t t-set="popup" t-value="this"/>
+        <div class="popup-backdrop" t-on-click="props.close">
+            <div class="o_appointment_form_popup" t-on-click.stop="">
+                <!-- Header with dynamic color based on status -->
+                <div class="popup-header" t-att-style="'background-color: ' + popup.getStatusColor(state.state) + ';'">
+                    <div class="header-title text-center">
+                        <h4 class="mb-0 text-white">
+                            <t t-if="props.mode === 'create'">Create New Appointment</t>
+                            <t t-else="">Edit Appointment</t>
+                            <t t-if="state.currentAppointment"> - <t t-esc="state.currentAppointment.name"/></t>
+                        </h4>
+                    </div>
+                    <div class="header-actions">
+                        <button type="button" class="btn btn-sm btn-light open-full-form-btn" t-on-click="popup.openFullForm">
+                            <i class="fa fa-external-link"/> Open Full Form
+                        </button>
+                        <button type="button" class="popup-close" t-on-click="props.close">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="popup-content">
+                    <div t-if="state.initialLoading" class="initial-loading-overlay">
+                        <div class="loading-spinner-container">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">Loading appointment data...</div>
+                        </div>
+                    </div>
+                    <div t-if="state.loading" class="text-center">
+                        <i class="fa fa-spinner fa-spin"/>
+                        Loading...
+                    </div>
+
+                    <div t-else="" class="form-container">
+                        <!-- Status Bar -->
+                        <div class="status-bar mb-3 text-center">
+                            <div class="state-indicator" t-att-class="'state-' + state.state"
+                                 t-att-style="'background-color: ' + popup.getStatusColor(state.state) + '; color: white;'">
+                                <t t-esc="popup.getStateDisplayName(state.state)"/>
+                            </div>
+                        </div>
+
+                        <!-- Form Fields - Centered Content -->
+                        <div class="form-fields mx-auto">
+                            <!-- Patient Field - Editable with suggestions and create new -->
+                            <div class="form-group text-center" style="position: relative;">
+                                <label>Patient <span class="text-danger">*</span></label>
+                                <div style="position: relative;">
+                                    <input type="text"
+                                           class="form-control text-center"
+                                           t-att-class="'form-control text-center ' + popup.getFieldErrorClass('patient_id')"
+                                           t-att-value="state.patient_display_name"
+                                           placeholder="Type patient name, mobile, or phone"
+                                           t-on-input="(ev) => popup.handlePatientInput(ev.target.value)"
+                                           t-on-focus="() => popup.handlePatientFocus()"
+                                           t-on-blur="popup.handlePatientBlur"/>
+
+                                    <t t-if="state.showPatientSuggestions">
+                                        <div style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999;">
+                                            <t t-set="filteredPatients" t-value="popup.getFilteredPatientSuggestions()"/>
+                                            <div class="bg-white border rounded shadow-lg" style="max-height: 250px; overflow-y: auto;">
+                                                <t t-if="filteredPatients.length > 0">
+                                                    <t t-foreach="filteredPatients" t-as="patient" t-key="patient.id">
+                                                        <div class="p-2 border-bottom cursor-pointer hover-bg-light"
+                                                             t-on-click="() => popup.selectPatient(patient)">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <div>
+                                                                    <strong t-esc="patient.name"/>
+                                                                    <t t-if="patient.age">
+                                                                        <small class="text-muted ms-2">(<t t-esc="patient.age"/>)</small>
+                                                                    </t>
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <t t-if="patient.total_due">
+                                                                        <small class="text-danger">
+                                                                            <i class="fa fa-money-bill"/> Due: <t t-esc="patient.total_due"/>
+                                                                        </small>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between mt-1">
+                                                                <t t-if="patient.mobile or patient.phone">
+                                                                    <small class="text-muted">
+                                                                        <i class="fa fa-phone"/>
+                                                                        <t t-if="patient.mobile">
+                                                                            <t t-esc="patient.mobile"/>
+                                                                        </t>
+                                                                        <t t-elif="patient.phone">
+                                                                            <t t-esc="patient.phone"/>
+                                                                        </t>
+                                                                    </small>
+                                                                </t>
+                                                                <t t-if="patient.gender">
+                                                                    <small class="text-muted ms-3">
+                                                                        <i class="fa fa-user"/>
+                                                                        <t t-if="patient.gender === 'male'">Male</t>
+                                                                        <t t-elif="patient.gender === 'female'">Female</t>
+                                                                        <t t-else="">Not specified</t>
+                                                                    </small>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="p-2 text-muted text-center">
+                                                        No matching patients found
+                                                    </div>
+                                                </t>
+                                                <!-- Create New Patient Option -->
+                                                <t t-if="state.patient_input &amp;&amp; state.patient_input.length > 2">
+                                                    <div class="p-2 border-top cursor-pointer text-primary hover-bg-light"
+                                                         t-on-click="() => popup.createNewPatient()">
+                                                        <i class="fa fa-plus me-2"/> Create new patient: "<t t-esc="state.patient_input"/>"
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <t t-if="popup.getFieldError('patient_id')">
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('patient_id')"/>
+                                    </div>
+                                </t>
+
+                                <!-- Display selected patient information -->
+                                <t t-if="state.selectedPatientInfo">
+                                    <div class="patient-info-card mt-2 p-2 border rounded bg-light">
+                                        <div class="row text-center">
+                                            <div class="col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fa fa-phone"/> Phone:
+                                                </small>
+                                                <div class="fw-bold" t-esc="state.selectedPatientInfo.phone"/>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fa fa-user"/> Gender:
+                                                </small>
+                                                <div class="fw-bold" t-esc="state.selectedPatientInfo.gender"/>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fa fa-calendar"/> Age:
+                                                </small>
+                                                <div class="fw-bold" t-esc="state.selectedPatientInfo.age"/>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fa fa-money-bill"/> Total Due:
+                                                </small>
+                                                <div class="fw-bold" t-att-style="'color: ' + (state.selectedPatientInfo.total_due > 0 ? 'red' : 'green')">
+                                                    <t t-esc="state.selectedPatientInfo.total_due"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Physician and Status -->
+                            <div class="form-row">
+                                <!-- Physician Field - Editable with suggestions -->
+                                <div class="form-group col-md-6 text-center position-relative">
+                                    <label>Physician <span class="text-danger">*</span></label>
+                                    <div class="editable-autocomplete">
+                                        <input type="text"
+                                               class="form-control text-center"
+                                               t-att-class="'form-control text-center ' + popup.getFieldErrorClass('physician_id')"
+                                               t-att-value="state.physician_display_name"
+                                               placeholder="Type physician name"
+                                               t-on-input="(ev) => popup.handlePhysicianInput(ev.target.value)"
+                                               t-on-focus="() => popup.handlePhysicianFocus()"
+                                               t-on-blur="popup.handlePhysicianBlur"/>
+
+                                        <!-- Suggestions Dropdown -->
+                                        <t t-if="state.showPhysicianSuggestions">
+                                            <div class="editable-suggestions-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1050;">
+                                                <t t-set="filteredPhysicians" t-value="popup.getFilteredPhysicianSuggestions()"/>
+                                                <div class="suggestions-container bg-white border rounded shadow-lg" style="max-height: 250px; overflow-y: auto;">
+                                                    <t t-if="filteredPhysicians.length > 0">
+                                                        <t t-foreach="filteredPhysicians" t-as="physician" t-key="physician.id">
+                                                            <div class="suggestion-item p-2 border-bottom cursor-pointer"
+                                                                 t-on-click="() => popup.selectPhysician(physician)">
+                                                                <t t-esc="physician.name"/>
+                                                            </div>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="suggestion-item p-2 text-muted text-center">
+                                                            No matching physicians found
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="popup.getFieldError('physician_id')">
+                                        <div class="invalid-feedback d-block">
+                                            <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('physician_id')"/>
+                                        </div>
+                                    </t>
+                                </div>
+
+                                <!-- Status Selection -->
+                                <div class="form-group col-md-6 text-center">
+                                    <label>Status</label>
+                                    <select class="form-control text-center" t-att-value="state.state"
+                                            t-on-change="(ev) => popup.handleFieldChange('state', ev.target.value)">
+                                        <t t-foreach="state.stateOptions" t-as="stateOption" t-key="stateOption.value">
+                                            <option t-att-value="stateOption.value"
+                                                    t-att-selected="stateOption.value === state.state"
+                                                    t-att-style="'color: ' + popup.getStatusColor(stateOption.value)">
+                                                <t t-esc="stateOption.label"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <!-- Appointment Type -->
+                            <div class="form-group text-center">
+                                <label>Appointment Type <span class="text-danger">*</span></label>
+                                <select class="form-control text-center" t-att-value="state.consultation_type"
+                                        t-on-change="(ev) => popup.handleFieldChange('consultation_type', ev.target.value)">
+                                    <option value="consultation">Consultation</option>
+                                    <option value="followup">Follow Up</option>
+                                    <option value="treatment_schedule">Treatment Schedule</option>
+                                </select>
+                            </div>
+
+                            <!-- ======================================= -->
+                            <!-- TREATMENT SCHEDULE FIELDS (Conditional) -->
+                            <!-- ======================================= -->
+                            <t t-if="state.show_treatment_schedule_fields">
+                                <div class="treatment-schedule-section border rounded p-3 mb-3 bg-light">
+                                    <h5 class="text-center mb-3 text-primary">
+                                        <i class="fa fa-calendar-check me-2"/> Treatment Schedule Details
+                                    </h5>
+
+                                    <!-- Treatment Schedule Selection -->
+                                    <div class="form-group text-center">
+                                        <label>Treatment Schedule <span class="text-danger">*</span></label>
+                                        <t t-if="state.loading_treatment_schedule">
+                                            <div class="text-center">
+                                                <i class="fa fa-spinner fa-spin"/> Loading schedules...
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <select class="form-control text-center"
+                                                    t-att-class="'form-control text-center ' + popup.getFieldErrorClass('selected_treatment_schedule_id')"
+                                                    t-att-value="state.selected_treatment_schedule_id"
+                                                    t-on-change="(ev) => popup.handleTreatmentScheduleChange(ev.target.value)">
+                                                <option value="">Select Treatment Schedule</option>
+                                                <t t-foreach="state.treatment_schedules" t-as="schedule" t-key="schedule.id">
+                                                    <option t-att-value="schedule.id"
+                                                            t-att-selected="schedule.id === state.selected_treatment_schedule_id">
+                                                        <t t-esc="schedule.name"/> -
+                                                        <t t-if="schedule.state === 'in_progress'">
+                                                            <span class="badge bg-warning">In Progress</span>
+                                                        </t>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                            <small class="text-muted">Showing only schedules with status "In Progress"</small>
+                                        </t>
+                                        <t t-if="popup.getFieldError('selected_treatment_schedule_id')">
+                                            <div class="invalid-feedback d-block">
+                                                <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('selected_treatment_schedule_id')"/>
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <!-- Session Type Selection (Only when schedule is selected) -->
+                                    <t t-if="state.selected_treatment_schedule_id">
+                                        <!-- Session Type Field - Dropdown (not search) -->
+                                        <div class="form-group text-center">
+                                            <label>Session Type <span class="text-danger">*</span></label>
+                                            <select class="form-control text-center"
+                                                    t-att-class="'form-control text-center ' + popup.getFieldErrorClass('selected_session_type_id')"
+                                                    t-att-value="state.selected_session_type_id"
+                                                    t-on-change="(ev) => popup.handleSessionTypeChange(ev.target.value)">
+                                                <option value="">Select Session Type</option>
+                                                <t t-foreach="state.treatment_schedule_lines" t-as="line" t-key="line.id">
+                                                    <option t-att-value="line.id"
+                                                            t-att-selected="line.id === state.selected_session_type_id">
+                                                        <t t-esc="line.sequence"/>. <t t-esc="line.product_id[1]"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                            <small class="text-muted">Select from available session types in the treatment schedule</small>
+                                        </div>
+
+                                        <!-- Week Selection (Only when session type is selected) -->
+                                        <t t-if="state.selected_session_type_id and state.available_weeks.length > 0">
+                                            <div class="form-group text-center">
+                                                <label>Select Week <span class="text-danger">*</span></label>
+                                                <select class="form-control text-center"
+                                                        t-att-class="'form-control text-center ' + popup.getFieldErrorClass('selected_week')"
+                                                        t-att-value="state.selected_week"
+                                                        t-on-change="(ev) => popup.handleWeekChange(ev.target.value)">
+                                                    <option value="">Select Week</option>
+                                                    <t t-foreach="state.available_weeks" t-as="week" t-key="week.number">
+                                                        <option t-att-value="week.number"
+                                                                t-att-selected="week.number === state.selected_week">
+                                                            <t t-esc="week.label"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <t t-if="popup.getFieldError('selected_week')">
+                                                    <div class="invalid-feedback d-block">
+                                                        <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('selected_week')"/>
+                                                    </div>
+                                                </t>
+                                                <small class="text-muted">
+                                                    Total weeks available: <t t-esc="state.total_weeks"/>
+                                                </small>
+                                            </div>
+                                        </t>
+                                        <t t-elif="state.selected_session_type_id and state.available_weeks.length === 0">
+                                            <div class="alert alert-warning text-center mt-2">
+                                                <i class="fa fa-exclamation-triangle"/> No weeks available for this treatment schedule.
+                                                Please check the total weeks setting in the treatment schedule.
+                                            </div>
+                                        </t>
+                                    </t>
+                                </div>
+                            </t>
+
+
+                            <!-- Date - Full Width -->
+                            <div class="form-group text-center">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control text-center"
+                                       t-att-class="'form-control text-center ' + popup.getFieldErrorClass('tempDate')"
+                                       t-att-value="state.tempDate"
+                                       t-att-min="popup.getMinDate()"
+                                       t-att-max="popup.getMaxDate()"
+                                       t-on-change="(ev) => popup.handleDateChange(ev.target.value)"/>
+                                <t t-if="popup.getFieldError('tempDate')">
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('tempDate')"/>
+                                    </div>
+                                </t>
+                            </div>
+
+
+                            <!-- Time Range - Start and End Time with 30-minute intervals -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6 text-center position-relative">
+                                    <label>Start Time <span class="text-danger">*</span></label>
+                                    <div class="time-input-with-dropdown">
+                                        <input type="text"
+                                               class="form-control text-center time-input-24h"
+                                               t-att-class="'form-control text-center time-input-24h ' + popup.getFieldErrorClass('tempStartTime')"
+                                               pattern="[0-9]{2}:[0-5][0-9]"
+                                               placeholder="HH:MM"
+                                               title="Enter time in 24-hour format (00:00 to 23:59)"
+                                               t-att-value="state.tempStartTime"
+                                               readonly="readonly"
+                                               t-on-focus="() => popup.toggleTimeDropdown('start')"
+                                               t-on-blur="popup.closeDropdowns"/>
+                                        <i class="fa fa-chevron-down time-dropdown-icon"
+                                           t-on-click="() => popup.toggleTimeDropdown('start')"/>
+
+                                        <t t-if="state.showStartTimeDropdown">
+                                            <div class="custom-time-dropdown">
+                                                <div class="dropdown-header">
+                                                    <span>Select Start Time (30-min intervals)</span>
+                                                </div>
+                                                <div class="dropdown-content columns-layout">
+                                                    <div class="time-column">
+                                                        <div class="section-title">Hours</div>
+                                                        <div class="time-options-container">
+                                                            <div class="time-options-list">
+                                                                <t t-foreach="popup.generateHourOptions()" t-as="hour" t-key="hour">
+                                                                    <!-- 00 minutes option -->
+                                                                    <div class="time-option hour-option"
+                                                                         t-att-class="hour === popup.getCurrentHour(state.tempStartTime) &amp;&amp; '00' === popup.getCurrentMinute(state.tempStartTime) ? 'selected' : ''"
+                                                                         t-on-click="() => popup.selectTime(hour + ':00', 'start')">
+                                                                        <t t-esc="hour"/>:00
+                                                                    </div>
+                                                                    <!-- 30 minutes option -->
+                                                                    <div class="time-option hour-option"
+                                                                         t-att-class="hour === popup.getCurrentHour(state.tempStartTime) &amp;&amp; '30' === popup.getCurrentMinute(state.tempStartTime) ? 'selected' : ''"
+                                                                         t-on-click="() => popup.selectTime(hour + ':30', 'start')">
+                                                                        <t t-esc="hour"/>:30
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="popup.getFieldError('tempStartTime')">
+                                        <div class="invalid-feedback d-block">
+                                            <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('tempStartTime')"/>
+                                        </div>
+                                    </t>
+                                    <small class="text-muted">24-hour format (00:00 - 23:59)</small>
+                                </div>
+
+                                <div class="form-group col-md-6 text-center position-relative">
+                                    <label>End Time <span class="text-danger">*</span></label>
+                                    <div class="time-input-with-dropdown">
+                                        <input type="text"
+                                               class="form-control text-center time-input-24h"
+                                               t-att-class="'form-control text-center time-input-24h ' + popup.getFieldErrorClass('tempEndTime')"
+                                               pattern="[0-9]{2}:[0-5][0-9]"
+                                               placeholder="HH:MM"
+                                               title="Enter time in 24-hour format (00:00 to 23:59)"
+                                               t-att-value="state.tempEndTime"
+                                               readonly="readonly"
+                                               t-on-focus="() => popup.toggleTimeDropdown('end')"
+                                               t-on-blur="popup.closeDropdowns"/>
+                                        <i class="fa fa-chevron-down time-dropdown-icon"
+                                           t-on-click="() => popup.toggleTimeDropdown('end')"/>
+
+                                        <t t-if="state.showEndTimeDropdown">
+                                            <div class="custom-time-dropdown">
+                                                <div class="dropdown-header">
+                                                    <span>Select End Time (30-min intervals)</span>
+                                                </div>
+                                                <div class="dropdown-content columns-layout">
+                                                    <div class="time-column">
+                                                        <div class="section-title">Hours</div>
+                                                        <div class="time-options-container">
+                                                            <div class="time-options-list">
+                                                                <t t-foreach="popup.generateHourOptions()" t-as="hour" t-key="hour">
+                                                                    <!-- 00 minutes option -->
+                                                                    <div class="time-option hour-option"
+                                                                         t-att-class="hour === popup.getCurrentHour(state.tempEndTime) &amp;&amp; '00' === popup.getCurrentMinute(state.tempEndTime) ? 'selected' : ''"
+                                                                         t-on-click="() => popup.selectTime(hour + ':00', 'end')">
+                                                                        <t t-esc="hour"/>:00
+                                                                    </div>
+                                                                    <!-- 30 minutes option -->
+                                                                    <div class="time-option hour-option"
+                                                                         t-att-class="hour === popup.getCurrentHour(state.tempEndTime) &amp;&amp; '30' === popup.getCurrentMinute(state.tempEndTime) ? 'selected' : ''"
+                                                                         t-on-click="() => popup.selectTime(hour + ':30', 'end')">
+                                                                        <t t-esc="hour"/>:30
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="popup.getFieldError('tempEndTime')">
+                                        <div class="invalid-feedback d-block">
+                                            <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('tempEndTime')"/>
+                                        </div>
+                                    </t>
+                                    <small class="text-muted">24-hour format (00:00 - 23:59)</small>
+                                </div>
+                            </div>
+
+                            <!-- Duration Display (Read-only) -->
+                            <div class="form-group text-center">
+                                <label>Duration</label>
+                                <input type="text" class="form-control text-center" readonly="readonly"
+                                       t-att-value="popup.formatDuration(state.duration) + ' hours'"/>
+                                <small class="text-muted">Calculated from start and end time</small>
+                            </div>
+
+                            <!-- Consultation Room - Editable with suggestions -->
+                            <div class="form-group text-center position-relative">
+                                <label>Room Name<span class="text-danger">*</span></label>
+                                <div class="editable-autocomplete">
+                                    <input type="text"
+                                           class="form-control text-center"
+                                           t-att-class="'form-control text-center ' + popup.getFieldErrorClass('cabin_id')"
+                                           t-att-value="state.cabin_display_name"
+                                           placeholder="Type room name"
+                                           t-on-input="(ev) => popup.handleCabinInput(ev.target.value)"
+                                           t-on-focus="() => popup.handleCabinFocus()"
+                                           t-on-blur="popup.handleCabinBlur"/>
+
+                                    <!-- Suggestions Dropdown -->
+                                    <t t-if="state.showCabinSuggestions">
+                                        <div class="editable-suggestions-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1050;">
+                                            <t t-set="filteredCabins" t-value="popup.getFilteredCabinSuggestions()"/>
+                                            <div class="suggestions-container bg-white border rounded shadow-lg" style="max-height: 250px; overflow-y: auto;">
+                                                <t t-if="filteredCabins.length > 0">
+                                                    <t t-foreach="filteredCabins" t-as="cabin" t-key="cabin.id">
+                                                        <div class="suggestion-item p-2 border-bottom cursor-pointer"
+                                                             t-on-click="() => popup.selectCabin(cabin)">
+                                                            <t t-esc="cabin.name"/>
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="suggestion-item p-2 text-muted text-center">
+                                                        No matching rooms found
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <t t-if="popup.getFieldError('cabin_id')">
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('cabin_id')"/>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Consultation Service -->
+                            <div class="form-group text-center">
+                                <label>Consultation Service <span class="text-danger">*</span></label>
+                                <select class="form-control text-center"
+                                        t-att-class="'form-control text-center ' + popup.getFieldErrorClass('product_id')"
+                                        t-att-value="state.product_id"
+                                        t-on-change="(ev) => popup.handleFieldChange('product_id', ev.target.value)">
+                                    <option value="">Select Service</option>
+                                    <t t-foreach="state.consultationServices" t-as="service" t-key="service.id">
+                                        <option t-att-value="service.id" t-att-selected="service.id === state.product_id">
+                                            <t t-esc="service.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                                <t t-if="popup.getFieldError('product_id')">
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fa fa-exclamation-triangle"/> <t t-esc="popup.getFieldError('product_id')"/>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Notes Field -->
+                            <div class="form-group text-center">
+                                <label>Notes</label>
+                                <textarea class="form-control text-center"
+                                          rows="3"
+                                          placeholder="Enter appointment notes"
+                                          t-att-value="state.notes"
+                                          t-on-input="(ev) => popup.handleNotesChange(ev.target.value)">
+                                </textarea>
+                                <small class="text-muted">Additional information about the appointment</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="popup-footer text-center">
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-sm btn-primary" t-on-click="popup.saveAppointment"
+                                t-att-disabled="state.loading">
+                            <t t-if="state.loading">
+                                <i class="fa fa-spinner fa-spin"/> Saving...
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-save"/>
+                                <t t-if="props.mode === 'create'">Create Appointment</t>
+                                <t t-else="">Save Changes</t>
+                            </t>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

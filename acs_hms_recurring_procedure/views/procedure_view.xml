@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<odoo>
+
+     <!-- Product -->
+    <record id="product_template_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.template.product.recurrance.details</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="acs_hms.product_template_form_view_inherit"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="recurring_procedure"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Procedure Group -->
+    <record id="view_procedure_group_form" model="ir.ui.view">
+        <field name="name">procedure.group.form</field>
+        <field name="model">procedure.group</field>
+        <field name="inherit_id" ref="acs_hms.view_procedure_group_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='line_ids']//field[@name='days_to_add']" position="after">
+                <field name="recurring_procedure"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Treatement -->
+    <record id="view_hospital_hms_treatment_form" model="ir.ui.view">
+        <field name="name">hms.treatment.form</field>
+        <field name="model">hms.treatment</field>
+        <field name="inherit_id" ref="acs_hms.view_hospital_hms_treatment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='patient_procedure_ids']//field[@name='price_unit']" position="before">
+                <field name="recurring_procedure" optinal="hide"/>
+                <field name="repeat_type" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_acs_patient_procedure_form" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.form</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref="acs_hms.view_acs_patient_procedure_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_recurring_procedures" type="object" invisible="not recurrence_id" class="oe_stat_button" icon="fa-repeat" groups="acs_hms_recurring_procedure.group_recurring_procedures">
+                    <field name="recurring_count" widget="statinfo" string="Recurring Procedures"/>
+                </button>
+            </div>
+            <field name="invoice_id" position="after">
+                <field name="recurring_procedure" groups="acs_hms_recurring_procedure.group_recurring_procedures"/>
+                <label for="repeat_interval" groups="acs_hms_recurring_procedure.group_recurring_procedures" invisible="not recurring_procedure"/>
+                <div invisible="not recurring_procedure" class="d-flex" groups="acs_hms_recurring_procedure.group_recurring_procedures">
+                    <field name="repeat_interval" required="recurring_procedure" class="me-2" style="max-width: 2rem !important;"/>
+                    <field name="repeat_unit" required="recurring_procedure" class="me-2" style="max-width: 4rem !important;"/>
+                    <field name="repeat_type" required="recurring_procedure" class="me-2" style="max-width: 15rem !important;"/>
+                    <field name="repeat_until" invisible="repeat_type != 'until'" required="repeat_type == 'until'" class="me-2"/>
+                </div>
+                <field name="recurring_procedure" invisible="1"/>
+                <field name="recurrence_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

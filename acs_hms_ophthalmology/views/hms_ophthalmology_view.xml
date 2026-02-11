@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Ophthalmology Finding -->
+    <record id="view_acs_ophthalmology_finding_tree" model="ir.ui.view">
+        <field name="name">acs.ophthalmology.finding.tree</field>
+        <field name="model">acs.ophthalmology.finding</field>
+        <field name="arch" type="xml">
+            <list string="Ophthalmology Finding" editable="bottom">
+                <field name="eye_structure"/>
+                <field name="affected_eye"/>
+                <field name="finding"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Ophthalmology Evaluation -->
+    <record id="view_acs_ophthalmology_evaluation_search" model="ir.ui.view">
+        <field name="name">acs.ophthalmology.evaluation.search</field>
+        <field name="model">acs.ophthalmology.evaluation</field>
+        <field name="arch" type="xml">
+            <search string="Ophthalmology Evaluation">
+                <field name="name"/>
+                <field name="physician_id"/>
+                <field name="patient_id"/>
+                <newline/>
+                <group expand="0" string="Group By...">
+                    <filter string="State" name="state_groupby" domain="[]" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_acs_ophthalmology_evaluation_tree" model="ir.ui.view">
+        <field name="name">acs.ophthalmology.evaluation.tree</field>
+        <field name="model">acs.ophthalmology.evaluation</field>
+        <field name="arch" type="xml">
+            <list string="Ophthalmology Evaluation" decoration-muted="state=='done'" decoration-info="state=='in_rogress'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="age"/>
+                <field name="physician_id"/>
+                <field name="date"/>
+                <field name="state" decoration-info="state=='draft'" decoration-warning="state=='in_progress'" decoration-success="state=='done'" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_acs_ophthalmology_evaluation_form" model="ir.ui.view">
+        <field name="name">acs.ophthalmology.evaluation.form</field>
+        <field name="model">acs.ophthalmology.evaluation</field>
+        <field name="arch" type="xml">
+            <form string="Ophthalmology Evaluation">
+                <header>
+                    <button name="action_inprogress" invisible="state!='draft'" string="Start Evaluation" type="object" class="oe_highlight"/>
+                    <button name="action_done" invisible="state!='in_progress'" string="Done" type="object" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progree,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" readonly="state!='draft'"/>
+                            <field name="date" readonly="state=='done'"/>
+                            <field name="appointment_id" domain="[('patient_id','=',patient_id)]" readonly="state=='done'"/>
+                        </group>
+                        <group>
+                            <field name="physician_id" readonly="state=='done'"/>
+                            <field name="age" readonly="state=='done'"/>
+                            <field name="diseases_ids" widget="many2many_tags" readonly="state=='done'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="optometry" string="Optometry">
+                            <separator string="Refraction"/>
+                            <group name="dva_details">
+                                <group string="Right Eye" name="rdva_details">
+                                    <field name="rdva" readonly="state=='done'"/>
+                                    <field name="rdva_pinhole" readonly="state=='done'"/>
+                                    <field name="rdva_aid" readonly="state=='done'"/>
+                                    <field name="rnv" readonly="state=='done'"/>
+                                </group>
+                                <group string="Left Eye" name="ldva_details">
+                                    <field name="ldva" readonly="state=='done'"/>
+                                    <field name="ldva_pinhole" readonly="state=='done'"/>
+                                    <field name="ldva_aid" readonly="state=='done'"/>
+                                    <field name="lnv" readonly="state=='done'"/>
+                                </group>
+                            </group>
+                            <group name="exis_details">
+                                <group name="rexis_details">
+                                    <field name="rspherical" readonly="state=='done'"/>
+                                    <field name="rcylinder" readonly="state=='done'"/>
+                                    <field name="raxis" readonly="state=='done'"/>
+                                    <field name="rnv_add" readonly="state=='done'"/>
+                                </group>
+                                <group name="lexis_details">
+                                    <field name="lspherical" readonly="state=='done'"/>
+                                    <field name="lcylinder" readonly="state=='done'"/>
+                                    <field name="laxis" readonly="state=='done'"/>
+                                    <field name="lnv_add" readonly="state=='done'"/>
+                                </group>
+                            </group>
+
+                            <separator string="Best Corrected Visual Acuity"/>
+                            <group name="bcva_details">
+                                <group string="Right Eye" name="rbcva_details">
+                                    <field name="rbcva_spherical" readonly="state=='done'"/>
+                                    <field name="rbcva_cylinder" readonly="state=='done'"/>
+                                    <field name="rbcva_axis" readonly="state=='done'"/>
+                                    <field name="rbcva" readonly="state=='done'"/>
+                                    <field name="rbcva_nv_add" readonly="state=='done'"/>
+                                    <field name="rbcva_nv" readonly="state=='done'"/>
+                                </group>
+                                <group string="Left Eye" name="lbcva_details">
+                                    <field name="lbcva_spherical" readonly="state=='done'"/>
+                                    <field name="lbcva_cylinder" readonly="state=='done'"/>
+                                    <field name="lbcva_axis" readonly="state=='done'"/>
+                                    <field name="lbcva" readonly="state=='done'"/>
+                                    <field name="lbcva_nv_add" readonly="state=='done'"/>
+                                    <field name="lbcva_nv" readonly="state=='done'"/>
+                                </group>
+                            </group>
+                            <group string="Tonometry" name="tonometry">
+                                <field name="iop_method" readonly="state=='done'"/>
+                            </group>
+                            <group name="iop_details">
+                                <group name="riop_details">
+                                    <field name="riop" readonly="state=='done'"/>
+                                </group>
+                                <group name="liop_details">
+                                    <field name="liop" readonly="state=='done'"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="findings" string="Findings">
+                            <field name="findings_ids" readonly="state=='done'">
+                                <list string="Ophthalmology Finding" editable="bottom">
+                                    <field name="affected_eye"/>
+                                    <field name="eye_structure"/>
+                                    <field name="finding"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <field name="notes" readonly="state=='done'"/>
+                </sheet>
+                <chatter>
+                    <field name="message_ids"/>
+                    <field name="activity_ids"/>
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_acs_ophthalmology_evaluation" model="ir.actions.act_window">
+        <field name="name">Ophthalmology Evaluation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">acs.ophthalmology.evaluation</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new record.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_appointment" model="ir.actions.act_window">
+        <field name="name">Appointment</field>
+        <field name="res_model">hms.appointment</field>
+        <field name="view_mode">list,form,kanban,calendar,pivot</field>
+        <field name="domain" eval="[('department_id.department_type','=','ophthalmology')]"/>
+        <field name="context">{'search_default_today': 1,'search_default_done': 1, 'acs_department_type': 'ophthalmology'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add an Ophthalmology Appointment.
+            </p>
+        </field>
+    </record>
+
+</odoo>

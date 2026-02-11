@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Main Treatment Schedule View Template -->
+    <t t-name="TreatmentSchedule.MainView" owl="1">
+        <div class="o_treatment_schedule_container">
+
+            <!-- Loading State -->
+            <t t-if="state.loading">
+                <div class="o_treatment_schedule_loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading Treatment Schedule...</p>
+                </div>
+            </t>
+
+            <!-- Main Content -->
+            <t t-else="">
+                <!-- Header Section -->
+                <div class="o_treatment_schedule_header">
+                    <div class="header-left">
+                        <!-- Status Badges -->
+                        <div class="status-container">
+                            <span class="status-label">Status:</span>
+                            <div class="btn-group status-buttons">
+                                <button t-foreach="['draft', 'in_progress', 'completed', 'cancelled']"
+                                        t-as="statusOption"
+                                        t-key="statusOption"
+                                        t-attf-class="btn btn-sm #{state.scheduleData.state === statusOption ? 'active' : ''}"
+                                        t-att-style="state.scheduleData.state === statusOption ? getStateStyle(statusOption) : ''"
+                                        t-on-click="() =&gt; this.onStateChange(statusOption)">
+                                    <t t-esc="getStateDisplayName(statusOption)"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reference في منتصف الهيدر -->
+                    <div class="header-center">
+                        <div class="reference-container">
+                            <span class="reference-label">Reference:</span>
+                            <span class="reference-value" t-esc="state.scheduleData.name"/>
+                        </div>
+                    </div>
+
+                    <div class="header-right">
+                        <!-- Print Button -->
+                        <button class="btn btn-primary btn-print" t-on-click="onPrintReport">
+                            <i class="fa fa-print me-2"/>
+                            Print Report
+                        </button>
+
+                        <!-- Back Button -->
+                        <button class="btn btn-secondary btn-back" t-on-click="onGoBack">
+                            <i class="fa fa-arrow-left me-2"/>
+                            Back to Form
+                        </button>
+
+                        <!-- Refresh Button -->
+                        <button class="btn btn-outline-secondary btn-refresh" t-on-click="onRefresh">
+                            <i class="fa fa-refresh"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Content Wrapper for Scrolling -->
+                <div class="treatment-schedule-content-wrapper">
+                    <!-- Info Section -->
+                    <div class="o_treatment_schedule_info">
+                        <!-- Patient & Physician Row -->
+                        <div class="info-grid-row">
+                            <!-- Patient -->
+                            <div class="info-grid-item patient-item">
+                                <label class="field-label"><i class="fa fa-user me-1"/> Patient</label>
+                                <div class="field-value">
+                                    <span class="value-display" t-esc="state.scheduleData.patient_name"/>
+                                </div>
+                            </div>
+
+                            <!-- Physician (Editable with Autocomplete) -->
+                            <div class="info-grid-item physician-item">
+                                <label class="field-label"><i class="fa fa-user-md me-1"/> Physician</label>
+                                <div class="field-value">
+                                    <t t-if="state.editingField === 'physician'">
+                                        <div class="edit-container autocomplete-container">
+                                            <div class="input-with-buttons">
+                                                <input type="text"
+                                                       class="form-control physician-autocomplete"
+                                                       t-att-value="state.physicianInput || ''"
+                                                       t-on-input="onPhysicianInputChange"
+                                                       t-on-blur="onPhysicianInputBlur"
+                                                       placeholder="Type doctor's name..."
+                                                       autocomplete="off"/>
+
+                                                <!-- Save/Cancel Buttons inside input -->
+                                                <div class="inline-actions">
+                                                    <button class="btn btn-sm btn-success"
+                                                            t-on-click="() =&gt; this.onFieldSave('physician')">
+                                                        <i class="fa fa-check"/>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-secondary"
+                                                            t-on-click="onFieldCancel">
+                                                        <i class="fa fa-times"/>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Physician Suggestions -->
+                                            <t t-if="state.showPhysicianSuggestions and state.filteredPhysicians.length &gt; 0">
+                                                <div class="autocomplete-suggestions">
+                                                    <t t-foreach="state.filteredPhysicians" t-as="physician" t-key="physician.id">
+                                                        <div class="suggestion-item"
+                                                             t-on-click="() =&gt; this.onPhysicianSelect(physician)">
+                                                            <i class="fa fa-user-md me-2"/>
+                                                            <span t-esc="physician.name"/>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="value-container editable" t-on-click="() =&gt; this.onFieldEdit('physician')">
+                                            <span t-esc="state.scheduleData.physician_name || 'Click to select physician'"/>
+                                            <i class="fa fa-pencil edit-icon"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date & Total Weeks Row -->
+                        <div class="info-grid-row">
+                            <!-- Date (Editable) -->
+                            <div class="info-grid-item date-item">
+                                <label class="field-label"><i class="fa fa-calendar me-1"/> Date</label>
+                                <div class="field-value">
+                                    <t t-if="state.editingField === 'date'">
+                                        <div class="edit-container">
+                                            <div class="input-with-buttons">
+                                                <input type="date"
+                                                       class="form-control"
+                                                       t-att-value="state.tempFieldValue"
+                                                       t-on-input="onTempFieldChange"/>
+
+                                                <!-- Save/Cancel Buttons inside input -->
+                                                <div class="inline-actions">
+                                                    <button class="btn btn-sm btn-success"
+                                                            t-on-click="() =&gt; this.onFieldSave('date')">
+                                                        <i class="fa fa-check"/>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-secondary"
+                                                            t-on-click="onFieldCancel">
+                                                        <i class="fa fa-times"/>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="value-container editable" t-on-click="() =&gt; this.onFieldEdit('date')">
+                                            <span t-esc="formatDate(state.scheduleData.date)"/>
+                                            <i class="fa fa-pencil edit-icon"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Total Weeks (Editable) -->
+                            <div class="info-grid-item weeks-item">
+                                <label class="field-label"><i class="fa fa-calendar-week me-1"/> Total Weeks</label>
+                                <div class="field-value">
+                                    <t t-if="state.editingField === 'total_weeks'">
+                                        <div class="edit-container">
+                                            <div class="input-with-buttons">
+                                                <select class="form-control"
+                                                       t-att-value="state.tempFieldValue"
+                                                       t-on-change="onTempFieldChange">
+                                                    <t t-foreach="getWeeksOptions()" t-as="option" t-key="option.value">
+                                                        <option t-att-value="option.value" t-esc="option.label"/>
+                                                    </t>
+                                                </select>
+
+                                                <!-- Save/Cancel Buttons inside select -->
+                                                <div class="inline-actions">
+                                                    <button class="btn btn-sm btn-success"
+                                                            t-on-click="() =&gt; this.onFieldSave('total_weeks')">
+                                                        <i class="fa fa-check"/>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-secondary"
+                                                            t-on-click="onFieldCancel">
+                                                        <i class="fa fa-times"/>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="value-container editable" t-on-click="() =&gt; this.onFieldEdit('total_weeks')">
+                                            <span>
+                                                <t t-esc="state.scheduleData.total_weeks"/>
+                                                <t t-if="state.scheduleData.total_weeks === '1'"> Week</t>
+                                                <t t-else=""> Weeks</t>
+                                            </span>
+                                            <i class="fa fa-pencil edit-icon"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Table -->
+                    <table class="o_treatment_schedule_table">
+                        <thead>
+                            <tr>
+                                <th class="session-type-header">
+                                    <div class="session-type-header-content">
+                                        <span>Session Type</span>
+                                    </div>
+                                </th>
+                                <t t-foreach="state.weeks" t-as="week" t-key="week">
+                                    <th class="week-header" t-esc="week"/>
+                                </t>
+                                <th class="actions-header">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="state.sessionTypes.length === 0">
+                                <tr>
+                                    <td colspan="10" class="no-sessions">
+                                        <div class="no-data-message">
+                                            <i class="fa fa-calendar-times-o"/>
+                                            <p>No session types defined yet.</p>
+                                            <!-- Add Session Button when no sessions -->
+                                            <button class="btn btn-success btn-add-first-session" t-on-click="startInlineSearch">
+                                                <i class="fa fa-plus me-2"/>
+                                                Add First Session Type
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-else="">
+                                <t t-foreach="state.sessionTypes" t-as="sessionType" t-key="sessionType.id">
+                                    <tr class="session-row">
+                                        <!-- Session Type Name -->
+                                        <td class="session-type-cell">
+                                            <div class="session-type-info">
+                                                <span class="session-sequence" t-esc="sessionType.sequence"/>
+                                                <span class="session-name" t-esc="sessionType.product_name"/>
+                                            </div>
+                                        </td>
+
+                                        <!-- Week Cells -->
+                                        <t t-foreach="state.weeks" t-as="week" t-key="week">
+                                            <td class="week-cell"
+                                                t-on-click="() =&gt; this.onCellClick(sessionType, week)"
+                                                t-on-mouseenter="(ev) =&gt; this.onCardMouseEnter(ev, sessionType, week)"
+                                                t-on-mouseleave="onCardMouseLeave">
+                                                <div class="week-card" t-att-style="getWeekCardStyle(sessionType, week)">
+                                                    <t t-if="hasWeekData(sessionType, week)">
+                                                        <t t-set="weekData" t-value="getWeekData(sessionType, week)"/>
+                                                        <div class="week-card-content">
+                                                            <!-- Display Date and Number -->
+                                                            <t t-if="weekData.date or weekData.number">
+                                                                <div class="week-info">
+                                                                    <t t-if="weekData.number">
+                                                                        <div class="week-number">
+                                                                            <span t-esc="weekData.number"/>
+                                                                        </div>
+                                                                    </t>
+                                                                </div>
+                                                            </t>
+
+                                                            <!-- Display Appointments in Grid Layout -->
+                                                            <t t-if="weekData.appointmentsCount &gt; 0">
+                                                                <div class="appointments-container">
+                                                                    <t t-foreach="weekData.appointments" t-as="appointment" t-key="appointment.id">
+                                                                        <t t-if="appointment_index &lt; 4">
+                                                                            <div class="appointment-card"
+                                                                                 t-attf-class="appointment-index-#{appointment_index + 1}"
+                                                                                 t-on-click="(ev) =&gt; { ev.stopPropagation(); this.onAppointmentClick(appointment.id); }">
+                                                                                <div class="appointment-header">
+                                                                                    <span class="appointment-ref" t-esc="appointment.name"/>
+                                                                                    <span t-attf-class="badge appointment-status #{appointment.state === 'confirmed' ? 'bg-success' : 'bg-warning'}"
+                                                                                          t-esc="appointment.state"/>
+                                                                                </div>
+                                                                                <div class="appointment-body">
+                                                                                    <div class="appointment-physician">
+                                                                                        <i class="fa fa-user-md me-1"/>
+                                                                                        <span t-esc="appointment.physician_name || 'No physician'"/>
+                                                                                    </div>
+                                                                                    <t t-if="appointment.date">
+                                                                                        <div class="appointment-time">
+                                                                                            <i class="fa fa-clock-o me-1"/>
+                                                                                            <span t-esc="formatAppointmentTime(appointment.date)"/>
+                                                                                        </div>
+                                                                                    </t>
+                                                                                </div>
+                                                                            </div>
+                                                                        </t>
+                                                                    </t>
+                                                                    <t t-if="weekData.appointmentsCount &gt; 4">
+                                                                        <div class="more-appointments">
+                                                                            <span class="badge bg-secondary">
+                                                                                +<t t-esc="weekData.appointmentsCount - 4"/> more
+                                                                            </span>
+                                                                        </div>
+                                                                    </t>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="week-card-empty">
+                                                            <i class="fa fa-plus"/>
+                                                            <small class="mt-1">Click to add</small>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </td>
+                                        </t>
+
+                                        <!-- Actions -->
+                                        <td class="actions-cell">
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                    t-on-click="() =&gt; this.onDeleteLine(sessionType.id)"
+                                                    title="Delete session type">
+                                                <i class="fa fa-trash"/>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <!-- Add Session Row -->
+                                <tr class="add-session-row">
+                                    <td class="add-session-cell">
+                                        <t t-if="state.showInlineSearch">
+                                            <div class="inline-search-container">
+                                                <input type="text"
+                                                       class="inline-search-input"
+                                                       t-att-value="state.inlineSearchTerm"
+                                                       t-on-input="onInlineSearchInput"
+                                                       t-on-keydown="onInlineSearchKeyDown"
+                                                       t-on-blur="onInlineSearchBlur"
+                                                       placeholder="Type session type name to search..."
+                                                       autofocus="true"/>
+
+                                                <!-- Search Suggestions -->
+                                                <t t-if="state.inlineSearchSuggestions.length &gt; 0">
+                                                    <div class="inline-search-suggestions">
+                                                        <t t-foreach="state.inlineSearchSuggestions" t-as="product" t-key="product.id">
+                                                            <div class="suggestion-item"
+                                                                 t-on-click="() =&gt; this.onInlineSearchSelect(product)">
+                                                                <i class="fa fa-cube me-2"/>
+                                                                <span t-esc="product.name"/>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <button class="btn btn-success btn-add-session-in-table" t-on-click="startInlineSearch">
+                                                <i class="fa fa-plus me-2"/>
+                                                Add New Session Type
+                                            </button>
+                                        </t>
+                                    </td>
+
+                                    <!-- خلايا فارغة لباقي الأعمدة -->
+                                    <t t-foreach="state.weeks" t-as="week" t-key="week">
+                                        <td class="empty-cell"></td>
+                                    </t>
+
+                                    <!-- عمود Actions فارغ -->
+                                    <td class="empty-cell"></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- Special Instructions Section -->
+                    <div class="special-instructions-container">
+                        <div class="special-instructions-header">
+                            <label><i class="fa fa-info-circle me-2"/>Special Instructions</label>
+                        </div>
+                        <div class="special-instructions-content">
+                            <t t-if="state.editingField === 'special_instructions'">
+                                <div class="edit-field-container">
+                                    <textarea class="form-control"
+                                              t-att-value="state.tempFieldValue"
+                                              t-on-input="onTempFieldChange"
+                                              rows="4"/>
+                                    <div class="edit-actions">
+                                        <button class="btn btn-sm btn-success" t-on-click="() =&gt; this.onFieldSave('special_instructions')">
+                                            <i class="fa fa-check"/> Save
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary" t-on-click="onFieldCancel">
+                                            <i class="fa fa-times"/> Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="instructions-content editable" t-on-click="() =&gt; this.onFieldEdit('special_instructions')">
+                                    <t t-esc="state.scheduleData.special_instructions || 'Click to add special instructions...'"/>
+                                    <i class="fa fa-pencil edit-icon"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Hover Card Popup -->
+                    <t t-if="state.hoveredCard and hasWeekData(state.hoveredCard.sessionType, state.hoveredCard.weekKey)">
+                        <div class="o_hover_card_popup"
+                             t-attf-style="left: #{state.hoverPosition.x}px; top: #{state.hoverPosition.y}px;">
+                            <div class="hover-card-header">
+                                <span t-esc="state.hoveredCard.sessionType.product_name"/>
+                                <span class="week-badge" t-esc="state.hoveredCard.weekKey"/>
+                            </div>
+                            <div class="hover-card-body">
+                                <div class="hover-item" t-if="state.hoveredCard.data.date">
+                                    <i class="fa fa-calendar"/>
+                                    <span t-esc="formatDate(state.hoveredCard.data.date)"/>
+                                </div>
+                                <div class="hover-item" t-if="state.hoveredCard.data.number">
+                                    <i class="fa fa-hashtag"/>
+                                    <span t-esc="state.hoveredCard.data.number"/>
+                                </div>
+                                <t t-if="state.hoveredCard.data.appointmentsCount &gt; 0">
+                                    <div class="hover-item appointments">
+                                        <i class="fa fa-calendar-check-o"/>
+                                        <span>
+                                            <t t-esc="state.hoveredCard.data.appointmentsCount"/>
+                                            Appointment<t t-if="state.hoveredCard.data.appointmentsCount &gt; 1">s</t>
+                                        </span>
+                                        <div class="appointment-list mt-2">
+                                            <t t-foreach="state.hoveredCard.data.appointments" t-as="appointment" t-key="appointment.id">
+                                                <div class="appointment-item"
+                                                     t-on-click="() =&gt; this.onAppointmentClick(appointment.id)"
+                                                     style="cursor: pointer;">
+                                                    <i class="fa fa-circle" style="font-size: 6px;"/>
+                                                    <span class="appointment-name" t-esc="appointment.name"/>
+                                                    <span class="appointment-date ms-2" t-esc="formatAppointmentTime(appointment.date)"/>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- Session Form Popup -->
+            <t t-if="state.showSessionPopup">
+                <SessionFormPopup
+                    slotData="state.slotData"
+                    mode="state.popupMode"
+                    availableProducts="state.availableProducts"
+                    availableAppointments="state.availableAppointments"
+                    onSave.bind="onPopupSave"
+                    onClose.bind="onClosePopup"
+                    onDelete.bind="onDeleteLine"/>
+            </t>
+        </div>
+    </t>
+
+</templates>

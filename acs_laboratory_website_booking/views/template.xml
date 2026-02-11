@@ -1,0 +1,386 @@
+<odoo>
+     
+    <template id="acs_lab_requests" inherit_id="acs_laboratory.lab_requests" name="Lab Requests">
+        <xpath expr="//th[@name='th_state']" position="after">
+            <th></th>
+        </xpath>
+        <xpath expr="//td[@name='td_state']" position="after">
+            <td>
+                <a t-if="lab_req.invoice_id" class="btn btn-primary" title="Pay Now" t-att-href="'/my/invoices/'+str(lab_req.invoice_id.id)+'#portal_pay'">Pay Now</a>
+            </td>
+        </xpath>
+    </template>
+
+    <template id="lab_req_progress_checkout" name="Lab Test Request Checkout">
+        <div class="row">
+            <t t-set="cancel_warning">'Are you sure you want to cancel process?'</t>
+            <t t-set="laboratory_request" t-value="website.acs_get_request('acs.laboratory.request')"/>
+            <div class="col-xl">
+                <div class="wizard">
+                    <span t-if="payment_step" class="o_wizard_has_extra_step d-none"/>
+                    <div class="progress-wizard">
+                        <a class="no-decoration" t-att-href="step&gt;=10 and '/create/lab/appointment' or '#'">
+                            <div id="wizard-step10" t-att-class="'acs-progress-step progress-wizard-step %s' % (step == 10 and 'active' or step&gt;10 and 'complete' or 'disabled')">
+                                <div class="progress-wizard-bar d-none d-md-block"/>
+                                <span class="progress-wizard-dot d-none d-md-inline-block"></span>
+                                <div class="text-center progress-wizard-steplabel">Patient Count &amp; Location</div>
+                            </div>
+                        </a>
+                        
+                        <a class="no-decoration" t-att-href="step&gt;=20 and '/acs/lab/slot' or '#'">
+                            <div id="wizard-step20" t-att-class="'acs-progress-step progress-wizard-step %s' % (step == 20 and 'active' or step&gt;20 and 'complete' or 'disabled')">
+                                <div class="progress-wizard-bar d-none d-md-block"/>
+                                <span class="progress-wizard-dot d-none d-md-inline-block"></span>
+                                <div class="text-center progress-wizard-steplabel">Select Slot</div>
+                            </div>
+                        </a>
+
+                        <a class="no-decoration" t-att-href="step&gt;=30 and '/acs/lab/tests' or '#'">
+                            <div id="wizard-step30" t-att-class="'acs-progress-step progress-wizard-step %s' % (step == 30 and 'active' or step&gt;30 and 'complete' or 'disabled')">
+                                <div class="progress-wizard-bar d-none d-md-block"/>
+                                <span class="progress-wizard-dot d-none d-md-inline-block"></span>
+                                <div class="text-center progress-wizard-steplabel">Lab Tests</div>
+                            </div>
+                        </a>
+
+                        <a class="no-decoration" t-att-href="step&gt;=40 and '/acs/lab/patients' or '#'">
+                            <div id="wizard-step40" t-att-class="'acs-progress-step progress-wizard-step %s' % (step == 40 and 'active' or step&gt;40 and 'complete' or 'disabled')">
+                                <div class="progress-wizard-bar d-none d-md-block"/>
+                                <span class="progress-wizard-dot d-none d-md-inline-block"></span>
+                                <div class="text-center progress-wizard-steplabel">Patient Data</div>
+                            </div>
+                        </a>
+
+                        <a class="no-decoration" t-att-href="'#'" t-if="payment_step">
+                            <div id="wizard-step50" t-att-class="'acs-progress-step progress-wizard-step %s' % (step == 50 and 'active' or step&gt;50 and 'complete' or 'disabled')">
+                                <div class="progress-wizard-bar d-none d-md-block"/>
+                                <span class="progress-wizard-dot d-none d-md-inline-block"></span>
+                                <div class="text-center progress-wizard-steplabel">Payment</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div t-if="message" class="col-12 alert alert-success alert-dismissable d-print-none" role="status">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">&amp;times;</button>
+                <strong>
+                    <span t-esc="message"/>
+                </strong>
+            </div>
+            <div t-if="error_message" class="col-12 alert alert-danger alert-dismissable d-print-none" role="status">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">&amp;times;</button>
+                <strong>
+                    <span t-esc="error_message"/>
+                </strong>
+            </div>
+        </div> 
+    </template>
+
+    <template id="acs_location_card" name="Branch Card">
+        <div class="card card-default acs_location_card col-md-2 col-xs-6 acs_radio_block" style="padding:10px;">
+            <input type="radio" name="acs_location_id" class="acs_checkbox sr-only" t-att-value="acs_location.id" t-attf-id="acs_location{{acs_location.id}}" t-att-checked="'checked' if acs_location.id==acs_location_id else None" required=""/>
+            <label t-attf-for="acs_location{{acs_location.id}}" style="width: 100%;">
+                <div>
+                    <img t-if="acs_location.partner_id.image_1920" class="acs_location_image" t-attf-src="data:image/png;base64,{{acs_location.partner_id.image_1920}}" alt="Patient"/>
+                    <img t-else="" class="acs_location_image" src="/acs_laboratory_website_booking/static/description/acs_location.png" alt="Branch"/>
+                    <div class="acs_location_name">
+                        <strong><span t-esc="acs_location.name"/></strong>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </template>
+
+    <template id="lab_appointment_patient_and_location" name="Select Patient Count &amp; Location">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container oe_website_sale py-2">
+                    <div class="row">
+                        <t t-set="cancel_warning">'Are you sure you want to cancel process?'</t>
+                        <div class="col-12">
+                            <t t-call="acs_laboratory_website_booking.lab_req_progress_checkout">
+                                <t t-set="step" t-value="10"/>
+                            </t>
+                        </div>
+                        
+                        <form action="/acs/lab/slot" method="post" class="s_website_form container-fluid" enctype="multipart/form-data">
+                            <div class="row justify-content-md-center" t-if="laboratory_request">
+
+                                <div class="mb-0 py-2 col-md-4 col-sm-9 s_website_form_field s_website_form_custom s_website_form_required" data-type="char" data-name="Field">
+                                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="patient_count">
+                                            <span class="s_website_form_label_content">Number of Patients</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input id="contact1" type="number" class="form-control s_website_form_input" name="patient_count" required="True" t-att-value="laboratory_request.patient_count"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center acs_location_selection mt16">
+                                    <t t-foreach="locations" t-as="location">
+                                        <t t-call="acs_laboratory_website_booking.acs_location_card">
+                                            <t t-set="acs_location" t-value="location"/>
+                                        </t>
+                                    </t>
+                                </div>
+
+                            </div>
+
+                            <div class="row justify-content-md-center mt64" t-if="not laboratory_request">
+                                <a class="btn btn-default btn-primary mb32" t-if="request.website.is_public_user()" href="/web/login?redirect=/create/lab/appointment" help="Click here to login."> Login to book an Appointment.</a>
+
+                                <div t-if="not request.website.is_public_user()">
+                                    There is no Linked Patient with your Login. Please Contact Administartor.
+                                </div>
+                            </div>
+
+                            <div class="row" t-if="laboratory_request">
+                                <div class="col-12 clearfix text-center mt32 mb32">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-default btn-primary mb32 "> Next <span class="fa fa-long-arrow-right" />
+                                    </button>
+                                    <a t-attf-onclick="return confirm(#{cancel_warning});" t-attf-href="/" class="btn btn-default mb32">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="lab_appointment_slot" name="Select Slot">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container oe_website_sale py-2">
+                    <div class="row">
+                        <t t-set="cancel_warning">'Are you sure you want to cancel process?'</t>
+                        <div class="col-12">
+                            <t t-call="acs_laboratory_website_booking.lab_req_progress_checkout">
+                                <t t-set="step" t-value="20"/>
+                            </t>
+                        </div>
+                        
+                        <div class="col-12 mt32">
+                            <form action="/acs/lab/tests" method="post" class="s_website_form container-fluid" enctype="multipart/form-data">
+                                <input type="hidden" name="slot_date" id="acs_slot_date"/>
+                                <input type="hidden" name="schedule_slot_id" id="acs_schedule_slot_id"/>
+                                <input type="hidden" name="last_date" t-att-value="last_date"/>
+                                <input type="hidden" name="disable_dates" t-att-value="disable_dates"/>
+                                <t t-if="not slots_data">
+                                    <div class="col-12 alert alert-danger">
+                                        <span>There are no slots available to book appointment please check later or contact with Management.</span>
+                                    </div>
+                                </t>
+
+                                <t t-if="slots_data">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div id="ACSBookingDatePicker"></div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="row">
+                                                <div class="acs_no_slots col-md-12 alert alert-danger text-center">
+                                                    <span>No slots available for selected date.</span>
+                                                </div>
+                                                <t t-foreach="slots_data" t-as="slot">
+                                                    <div class="acs_booking_slot col-2" t-att-id="slot['id']" t-att-data-slotline-id="slot['id']" t-att-data-date="slot['date']" style="display:none;">
+                                                        <span t-esc="slot['name']"/>
+                                                        <t t-if="department and slot['physician_name']">
+                                                            <span class="acs_small_font" t-esc="slot['physician_name']"/>
+                                                        </t>
+                                                        <div t-if="slot['show_fees']">
+                                                            <span class="acs_small_font">Fees: <t t-esc="slot['fees']"/></span>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                                <div class="row">
+                                    <div class="col-12 clearfix text-center mt32 mb32">
+                                        <a class="btn btn-default btn-primary mb32" t-if="request.website.is_public_user()" href="/web/login?redirect=/create/lab/appointment" help="Click here to login."> Login to book an Appointment.</a>
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" t-if="not request.website.is_public_user() and slots_data"  class="btn btn-default btn-primary mb32 "> Next <span class="fa fa-long-arrow-right" />
+                                        </button>
+                                        <a t-attf-onclick="return confirm(#{cancel_warning});" t-attf-href="/" class="btn btn-default mb32">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="acs_lab_test_card" name="Lab Tests Card">
+        <div class="card card-default lab_test_card col-md-2 col-xs-6 acs_checkbox_block" style="padding:10px;width: 200px;">
+            <input type="checkbox" t-attf-name="lab_test-#{lab_test.id}" class="acs_checkbox sr-only" t-att-value="lab_test.id" t-attf-id="lab_test{{lab_test.id}}" t-att-checked="'checked' if lab_test.id in laboratory_request.line_ids.mapped('test_id').ids else None"/>
+            <label t-attf-for="lab_test{{lab_test.id}}" style="width: 100%;">
+                <div>
+                    <img t-if="lab_test.image_1920" class="acs_service_image" t-attf-src="data:image/png;base64,{{lab_test.image_1920}}" alt="Test" style="height:130px;"/>
+                    <img t-else="" class="acs_service_image" src="/acs_laboratory_website_booking/static/description/acs_service.png" alt="Test" style="height:130px;"/>
+                    <div>
+                        <span t-field="lab_test.name"/>
+                        <div class="lab_test_price">
+                            <span t-esc="lab_test.product_id.lst_price" t-options="{'widget': 'monetary', 'display_currency': currency_id}"/><br/>
+                        </div>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </template>
+
+    <template id="lab_appointment_tests" name="Select Test">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container oe_website_sale py-2">
+                    <div class="row">
+                        <t t-set="cancel_warning">'Are you sure you want to cancel process?'</t>
+                        <div class="col-12">
+                            <t t-call="acs_laboratory_website_booking.lab_req_progress_checkout">
+                                <t t-set="step" t-value="30"/>
+                            </t>
+                        </div>
+                        
+                        <form action="/acs/lab/patients" method="post" class="s_website_form container-fluid" enctype="multipart/form-data">
+                            
+                            <div class="row text-center acs_location_selection mt16" t-if="lab_tests">   
+                                <t t-set="display_image" t-value="any(lt.image_1920 for lt in lab_tests)"/>
+                                <t t-foreach="lab_tests" t-as="lab_test">
+                                    <!-- <div class="col-3 card">
+                                        <div t-if="display_image" class="card-body p-1 oe_lab_test_image">
+                                            <span t-field="lab_test.image_1920" t-options="{'widget': 'image', 'preview_image': 'image_1920' if lab_test_image_big else 'image_1920'}" class="d-flex h-100 justify-content-center align-items-center"/>
+                                        </div>
+                                        <div class="card-body p-0 text-center o_wsale_lab_test_information">
+                                            <div class="p-2 o_wsale_lab_test_information_text">
+                                                <h6 class="o_wsale_lab_tests_item_title">
+                                                    <span t-field="lab_test.name"/>
+                                                </h6>
+                                                <div class="lab_test_price">
+                                                    <span t-esc="lab_test.product_id.lst_price" t-options="{'widget': 'monetary', 'display_currency': currency_id}"/><br/>
+                                                </div>
+                                                <div>
+                                                    <input class="acs_lab_test_checkbox" type="checkbox" t-att-value="lab_test.id" t-attf-name="lab_test-#{lab_test.id}" t-att-checked="True if lab_test.id in laboratory_request.line_ids.mapped('test_id').ids else False"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <t t-call="acs_laboratory_website_booking.acs_lab_test_card"/>
+                                </t>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 clearfix text-center mt32 mb32">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-default btn-primary mb32 "> Next <span class="fa fa-long-arrow-right" />
+                                    </button>
+                                    <a t-attf-onclick="return confirm(#{cancel_warning});"  t-attf-href="/" class="btn btn-default mb32">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="acs_patient_card" name="Patient Card">
+        <div class="card card-default lab_test_card col-md-2 col-xs-6 acs_checkbox_block" style="padding:10px;width:200px;">
+            <input type="checkbox" t-attf-name="patient-#{acs_patient.id}" class="acs_checkbox sr-only" t-att-value="acs_patient.id" t-attf-id="acs_patient{{acs_patient.id}}" t-att-checked="'checked' if acs_patient.id==patient.id else None"/>
+            <label t-attf-for="acs_patient{{acs_patient.id}}" style="width: 100%;">
+                <div>
+                    <img t-if="acs_patient.image_1920" class="acs_patient_image" t-attf-src="data:image/png;base64,{{acs_patient.image_1920}}" alt="Patient" style="height:130px;"/>
+                    <img t-else="" class="acs_patient_image" src="/acs_hms/static/src/img/patient.png" alt="Physician" style="height:130px;"/>
+                    <div class="acs_patient_name">
+                        <strong><span t-esc="acs_patient.name"/></strong>
+                    </div>
+                    <div>
+                        <span t-esc="acs_patient_relation"/>
+                        <a t-if="acs_patient_relation=='Self'" t-attf-href="/my/account?redirect=/acs/lab/patients"><i class="fa fa-pencil mx-1"/>Edit</a>
+                        <a t-else="" t-attf-href="/my/family/update/#{family_member.id}?redirect=/acs/lab/patients"><i class="fa fa-pencil mx-1"/>Edit</a>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </template>
+
+    <template id="lab_appointment_patients" name="Select Patients">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container oe_website_sale py-2">
+                    <div class="row">
+                        <t t-set="confirm_warning">'Are you sure you want to Cofirm Appointment and Process payment? Once redirected to Invocie page you can not change Any data. To Retray payment go to lab Requests and do it.'</t>
+                        <t t-set="cancel_warning">'Are you sure you want to cancel process?'</t>
+                        <div class="col-12">
+                            <t t-call="acs_laboratory_website_booking.lab_req_progress_checkout">
+                                <t t-set="step" t-value="40"/>
+                            </t>
+                        </div>
+                        
+                        <form action="/acs/lab/request/confirm" method="post" class="s_website_form container-fluid" enctype="multipart/form-data">
+                            
+                            <div class="row mt16 mb16">
+                                <a href="/my/family/new?redirect=/acs/lab/patients"><i class="fa fa-plus mx-1"/>Add New Family Member</a>
+                            </div>
+                            <div class="row text-center acs_location_selection">
+                                <t t-call="acs_laboratory_website_booking.acs_patient_card">
+                                    <t t-set="acs_patient" t-value="patient"/>
+                                    <t t-set="acs_patient_relation" t-value="'Self'"/>
+                                </t>
+                                <t t-foreach="family_members" t-as="family_member" t-if="family_members">
+                                    <t t-call="acs_laboratory_website_booking.acs_patient_card">
+                                        <t t-set="acs_patient" t-value="family_member.related_patient_id.sudo()"/>
+                                        <t t-set="acs_patient_relation" t-value="family_member.relation_id.name"/>
+                                    </t>
+                                </t>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 clearfix text-center mt32 mb32">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-default btn-primary mb32 " t-attf-onclick="return confirm(#{confirm_warning});"> 
+                                        <span t-if="payment_step">Pay</span>
+                                        <span t-else="">Submit</span>
+                                        <span class="fa fa-long-arrow-right" />
+                                    </button>
+                                    <a t-attf-onclick="return confirm(#{cancel_warning});" t-attf-href="/" class="btn btn-default mb32">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="lab_req_thank_you" name="Appointment Booked: Thank You">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <section>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb16 mt16">
+                                    <div style="text-align: center; color:green;font-size: 55px;">
+                                        Thank You!
+                                    </div><br/>
+                                    <div style="text-align: center; color:green;font-size: 25px;">
+                                        Your Laboratory request has been successfully <t t-if="laboratory_request.state=='accepted'">confirmed</t><t t-else="">submitted</t> , we will get back to you soon. Your reference number for this request is: <strong> <span t-field="laboratory_request.name"/> </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+</odoo>
