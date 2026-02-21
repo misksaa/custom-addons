@@ -245,8 +245,6 @@
               action="action_appointment_calendar_cabin_month"
               sequence="40"/>
 
-
-
     <!-- <menuitem id="menu_calendar_time_config"
           name="Calendar Time Configuration"
           parent="acs_hms.menu_appointment_cofig"
