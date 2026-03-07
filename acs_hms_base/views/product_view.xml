@@ -6,8 +6,10 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <field name="name" position="after">
-                <field name="hospital_product_type" required="1"/>
+            <field name="type" position="after">
+                <field string="Type" name="hospital_product_type" required="1"/>
+                <field string="Batch Number" name="batch_number"/>
+                <field string="Expiration date" name="expiration_date"/>
             </field>
             <xpath expr="//notebook" position="inside">
                 <page string="Medicament Details" name="acs_medicament_data" invisible="hospital_product_type!='medicament'">

@@ -32,28 +32,37 @@ class ProductProduct(models.Model):
 
     def _acs_get_partner_price(self, quantity=1, uom_id=False, partner=False):
         pricelist_id = self.acs_get_pricelist(partner)
-        #if any pricelist pass price based on pricelist else default price.
-        if pricelist_id and pricelist_id.discount_policy!='without_discount':
+
+        # Odoo 18 compatibility: discount_policy may not exist on product.pricelist
+        discount_policy = getattr(pricelist_id, 'discount_policy', None) if pricelist_id else None
+
+        # If pricelist exists and discount_policy is not explicitly 'without_discount', use pricelist price
+        if pricelist_id and discount_policy != 'without_discount':
             price = self.acs_get_pricelist_price(pricelist_id, quantity, uom_id)
         else:
             price = self.list_price
         return price
 
-    #Only One level pricelist price is computed.
+    # Only One level pricelist price is computed.
     def _acs_get_partner_price_discount(self, quantity=1, uom_id=False, partner=False):
         discount = 0
         base_price = self.list_price
         pricelist_id = self.acs_get_pricelist(partner)
-        #if any pricelist pass price based on pricelist else default price.
-        if pricelist_id and pricelist_id.discount_policy=='without_discount':
-            pricelist_price = self.acs_get_pricelist_price(pricelist_id, quantity, uom_id)
-            comp_discount = (base_price - pricelist_price) / base_price * 100
-            if (comp_discount > 0 and base_price > 0) or (comp_discount < 0 and base_price < 0):
-                # only show negative discounts if price is negative
-                # otherwise it's a surcharge which shouldn't be shown to the customer
-                discount = comp_discount
-        return discount
 
+        # Odoo 18 compatibility: discount_policy may not exist on product.pricelist
+        discount_policy = getattr(pricelist_id, 'discount_policy', None) if pricelist_id else None
+
+        # Show discount only when policy is explicitly 'without_discount'
+        if pricelist_id and discount_policy == 'without_discount':
+            pricelist_price = self.acs_get_pricelist_price(pricelist_id, quantity, uom_id)
+
+            # Avoid division by zero
+            if base_price:
+                comp_discount = (base_price - pricelist_price) / base_price * 100
+                if (comp_discount > 0 and base_price > 0) or (comp_discount < 0 and base_price < 0):
+                    discount = comp_discount
+
+        return discount
 
 class product_template(models.Model):
     _inherit = "product.template"
@@ -85,6 +94,8 @@ class product_template(models.Model):
         string='Route', help='')
     form_id = fields.Many2one('drug.form', ondelete='cascade', 
         string='Form',help='Drug form, such as tablet or gel')
+    expiration_date = fields.Date("Expiration date")
+    batch_number = fields.Char(string='Batch Number')
 
 
 class StockProductionLot(models.Model):
