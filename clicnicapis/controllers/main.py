@@ -67,3 +67,46 @@ class ClicnicAPI(http.Controller):
                 'status': 'error',
                 'message': str(e)
             }
+
+    @http.route('/api/doctor_availability', type='json', auth='user', methods=['POST'], csrf=False)
+    def check_doctor_availability(self, **kwargs):
+        """
+        Check doctor availability slots.
+        Expects a JSON payload with:
+        - physician_id (integer, optional)
+        - department_id (integer, optional)
+        """
+        physician_id = kwargs.get('physician_id')
+        department_id = kwargs.get('department_id')
+
+        if not physician_id and not department_id:
+            return {
+                'status': 'error',
+                'message': _('Either "physician_id" or "department_id" must be provided.')
+            }
+
+        try:
+            schedule_data = {
+                'schedule_type': 'appointment',
+                'physician_id': physician_id,
+                'department_id': department_id
+            }
+            
+            # Fetch slots and disabled dates from the 'acs.schedule' model
+            slot_data = request.env['acs.schedule'].sudo().acs_get_slot_data(**schedule_data)
+            disable_dates = request.env['acs.schedule'].sudo().acs_get_disabled_dates(**schedule_data)
+
+            return {
+                'status': 'success',
+                'data': {
+                    'slot_data': slot_data,
+                    'disable_dates': disable_dates
+                }
+            }
+
+        except Exception as e:
+            _logger.error("Error checking doctor availability: %s", str(e))
+            return {
+                'status': 'error',
+                'message': str(e)
+            }
